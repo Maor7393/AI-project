@@ -20,6 +20,8 @@ class Graph(object):
             name_list.append(vertex.name)
         return name_list
 
+    def get_neighbors(self, vertex):
+        return self.graph_dict[vertex];
     def vertex_exists(self, vertex):
         return vertex.name in self.vertices_names()
 
