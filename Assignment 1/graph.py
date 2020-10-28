@@ -1,4 +1,4 @@
-import node
+import vertex
 
 class Graph(object):
 
@@ -10,36 +10,33 @@ class Graph(object):
     def vertices(self):
         return list(self.__graph_dict.keys())
 
+    def vertices_names(self):
+        name_list = []
+        for vertex in vertices(self):
+            name_list.append(vertex.name)
+        return name_list
+
     def edges(self):
-        """ returns the edges of a graph """
         return self.__generate_edges()
 
+    def vertexExists(self,vertex):
+        return vertex.name in self.vertices_names();
+
     def add_vertex(self, vertex):
-        if vertex not in self.__graph_dict:
+        if not self.vertexExists(vertex):
             self.__graph_dict[vertex] = []
 
-    def add_edge(self, edge):
-        """ assumes that edge is of type set, tuple or list; 
-            between two vertices can be multiple edges! 
-        """
-        edge = set(edge)
-        (vertex1, vertex2) = tuple(edge)
-        if vertex1 in self.__graph_dict:
-            self.__graph_dict[vertex1].append(vertex2)
+    def add_edge(self, vertex1,vertex2,weight):
+        if  self.vertexExists(vertex1):
+            self.__graph_dict[vertex1].append((vertex2,weight))
         else:
-            self.__graph_dict[vertex1] = [vertex2]
+            self.__graph_dict[vertex1] = [(vertex2,weight)]
 
     def __generate_edges(self):
-        """ A static method generating the edges of the 
-            graph "graph". Edges are represented as sets 
-            with one (a loop back to the vertex) or two 
-            vertices 
-        """
         edges = []
         for vertex in self.__graph_dict:
-            for neighbour in self.__graph_dict[vertex]:
-                if {neighbour, vertex} not in edges:
-                    edges.append({vertex, neighbour})
+            for neighbor_tuple in self.__graph_dict[vertex]:
+                edges.append((vertex,neighbor_tuple[0],neighbor_tuple[1]))
         return edges
 
     def __str__(self):
@@ -48,7 +45,7 @@ class Graph(object):
             res += str(k) + " "
         res += "\nedges: "
         for edge in self.__generate_edges():
-            res += str(edge) + " "
+            res += str(edge) + ", "
         return res
 
 

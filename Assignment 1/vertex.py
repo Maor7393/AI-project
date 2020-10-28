@@ -1,4 +1,4 @@
-class Node (object) :
+class Vertex (object) :
     def __init__(self,name,number_of_people):
         self.name = name
         self.number_of_people = number_of_people
