@@ -21,7 +21,16 @@ class Graph(object):
         return name_list
 
     def get_neighbors(self, vertex):
-        return self.graph_dict[vertex];
+        return self.graph_dict[vertex]
+
+    def edge_weight(self, vertex1, vertex2):
+        neighbors = self.get_neighbors(vertex1)
+        for neighbor in neighbors:
+            if neighbor[0].name == vertex2.name:
+                return neighbor[1]
+
+
+
     def vertex_exists(self, vertex):
         return vertex.name in self.vertices_names()
 
