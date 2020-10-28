@@ -4,4 +4,4 @@ class Vertex (object) :
         self.number_of_people = number_of_people
 
     def __str__(self):
-        print((self.name,self.number_of_people));
+        return "name: "+self.name + "num of people: "+ str(self.number_of_people)

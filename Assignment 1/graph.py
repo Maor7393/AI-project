@@ -7,13 +7,12 @@ class Graph(object):
             graph_dict = {}
         self.__graph_dict = graph_dict
 
-
     def vertices(self):
         return list(self.__graph_dict.keys())
 
     def vertices_names(self):
         name_list = []
-        for vertex in vertices(self):
+        for vertex in self.vertices(self):
             name_list.append(vertex.name)
         return name_list
 

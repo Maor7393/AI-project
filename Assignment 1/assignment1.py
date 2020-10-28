@@ -1,13 +1,16 @@
-import graph
+import graph as g
 
-import vertex
+import vertex as v
 
 if __name__ == "__main__":
 	print("hi")
-	graph = graph.Graph();
+	graph = g.Graph();
+	vertex = v.Vertex("omri",7);
+	print(vertex)
+
 
 def generateGraph(file_name):
-	graph = graph.Graph()
+	graph = g.Graph()
 	file = open(file_name)
 	lines = file.readlines()
 	vertices = {}
@@ -17,8 +20,8 @@ def generateGraph(file_name):
 		if type == 'V':
 			name = line[1]
 			number_of_people = line[2]
-			v = vertex(name, number_of_people)
-			vertices[v.name] = v
+			vertex = g.vertex(name, number_of_people)
+			vertices[vertex.name] = vertex
 			graph.add_vertex(v)          
 		elif type == 'E':
 			source_name = line[1]
