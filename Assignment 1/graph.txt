@@ -1,10 +1,7 @@
-D 4.5              ; Deadline is at time 4.5
-
+D 4.5
 V Arad 1                  
 V Bukarest 1               
 V Varna 3            
-V Kfar-Hes 2     
-
-  v1 v2 w
-E 1 2 1                 ; Edge 1 from vertex 1 to vertex 2, weight 1
-E 3 4 1                 ; Edge 2 from vertex 3 to vertex 4, weight 1
+V Kfar-Hes 2
+E Arad Bukarest 1
+E Bukarest Varna 1
