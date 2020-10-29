@@ -1,4 +1,6 @@
 import vertex as v
+import sys
+from queue import PriorityQueue
 
 
 class Graph(object):
@@ -21,7 +23,8 @@ class Graph(object):
         return name_list
 
     def get_neighbors(self, vertex):
-        return self.graph_dict[vertex];
+        return self.graph_dict[vertex]
+
     def vertex_exists(self, vertex):
         return vertex.name in self.vertices_names()
 
@@ -48,8 +51,58 @@ class Graph(object):
             res += str(k) + ", "
         res += "\nedges: "
         for edge in self.generate_edges():
-            res += "("+edge[0].name + ", " + edge[1].name + ", " + str(edge[2]) + "), "
+            res += "(" + edge[0].name + ", " + edge[1].name + ", " + str(edge[2]) + "), "
         return res
+
+
+def update_priority(priority_queue, neighbor, distances_dict):
+    removed_vertices = []
+    while not priority_queue.empty():
+        vertex = priority_queue.get()
+        removed_vertices.append(vertex)
+        if vertex.name == neighbor.name:
+            break
+    while len(removed_vertices) > 0:
+        vertex = removed_vertices.pop()
+        priority_queue.put(distances_dict[vertex], vertex)
+
+
+def run_dijkstra(g, source):
+    priority_queue = PriorityQueue()
+    distances_dict = {}
+    prev_dict = {}
+    infinity = sys.maxsize
+
+    for vertex in g.vertices():
+        if vertex.name != source.name:
+            distances_dict[vertex.name] = infinity
+            prev_dict[vertex] = None
+        distance = distances_dict[vertex.name]
+        priority_queue.put((distance, vertex))
+
+    while not priority_queue.empty():
+        min_vertex = priority_queue.get()
+        for neighbor in g.get_neighbors(min_vertex):
+            alt = distances_dict[min_vertex] + g.edge_weight(min_vertex, neighbor)
+            if alt < distances_dict[neighbor.vertex]:
+                distances_dict[neighbor] = alt
+                prev_dict[neighbor] = min_vertex
+                update_priority(priority_queue, neighbor, distances_dict)
+
+    return distances_dict, prev_dict
+
+    # while Q is not empty:                      // The main loop
+    # 15         u ← Q.extract_min()                    // Remove and return best vertex
+    # 16         for each neighbor v of u:              // only v that are still in Q
+    # 17             alt ← dist[u] + length(u, v)
+    # 18             if alt < dist[v]
+    # 19                 dist[v] ← alt
+    # 20                 prev[v] ← u
+    # 21                 Q.decrease_priority(v, alt)
+    # 22
+    # 23     return dist, prev
+
+    pass
 
 
 def generate_graph(file_name):
