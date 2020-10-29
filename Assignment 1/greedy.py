@@ -30,7 +30,7 @@ class Greedy(agent.Agent):
 		amount_of_people = self.current_vertex.num_of_people
 		self.score = self.score + amount_of_people
 		self.current_vertex.num_of_people = 0
-		move_description = "saved " + str(amount_of_people) + " from " + self.current_vertex.name
+		move_description = "saved " + str(amount_of_people) + " people from " + self.current_vertex.name
 		return move_description
 
 	def act(self, graph):
@@ -42,9 +42,7 @@ class Greedy(agent.Agent):
 			return "IN EDGE PROGRESS: " + str(self.in_edge_progress)
 
 		elif len(self.sequence) > 0:
-			save_description = ''
-			if self.current_vertex.num_of_people > 0:
-				save_description = self.save()
+			save_description = self.save()
 			move_description = self.move(graph)
 			return save_description + "," + move_description
 
