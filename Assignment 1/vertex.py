@@ -14,4 +14,19 @@ class VertexWrapper(object):
         self.attribute = attribute
 
     def __lt__(self, other):
-        return self.attribute - other.attribute
+        if self.attribute < other.attribute:
+            return True
+        else:
+            return False
+
+    def __gt__(self, other):
+        if self.attribute > other.attribute:
+            return True
+        else:
+            return False
+
+    def __eq__(self, other):
+        if self.attribute == other.attribute:
+            return True
+        else:
+            return False
