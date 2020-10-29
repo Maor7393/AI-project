@@ -97,7 +97,6 @@ def run_dijkstra(g, source):
 
     while not priority_queue.empty():
         min_vertex_wrapper = priority_queue.get()
-        print(min_vertex_wrapper.vertex)
         for neighbor in map(lambda neighbor_tup: neighbor_tup[0], g.get_neighbors(min_vertex_wrapper.vertex)):
             alt = distances_dict[min_vertex_wrapper.vertex] + g.edge_weight(min_vertex_wrapper.vertex, neighbor)
             if alt < distances_dict[neighbor]:

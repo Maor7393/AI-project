@@ -3,7 +3,6 @@ import sys
 import graph as g
 
 
-
 class Greedy(agent.Agent):
 
 	def __init__(self, vertex):
@@ -11,10 +10,14 @@ class Greedy(agent.Agent):
 		self.sequence = []
 		self.in_edge_progress = 0
 
+	def is_terminated(self):
+		return self.terminated
+
 	def move(self, graph):
 		next_vertex = self.sequence[0]
 		edge_weight = graph.edge_weight(self.current_vertex, next_vertex)
-		move_description = "MOVING FROM " + self.current_vertex.name + "TO " + next_vertex.name + " : " + str(edge_weight)
+		move_description = "MOVING FROM " + self.current_vertex.name + "TO " + next_vertex.name + " : " + str(
+			edge_weight)
 		self.in_edge_progress = edge_weight
 		self.current_vertex = next_vertex
 		self.sequence = self.sequence[1:]
@@ -30,16 +33,16 @@ class Greedy(agent.Agent):
 	def act(self, graph):
 		if self.terminated:
 			return "TERMINATED"
+
 		if len(self.sequence) == 0:
 			save_description = ""
 			if self.current_vertex.num_of_people > 0:
 				save_description = self.save()
-
 			distances, prevs = g.run_dijkstra(graph, self.current_vertex)
 			min_distance = sys.maxsize
 			destination = None
 			for vertex in distances.keys():
-				if vertex.number_of_people > 0 and min_distance > distances[vertex]:
+				if vertex.num_of_people > 0 and min_distance > distances[vertex]:
 					destination = vertex
 					min_distance = distances[vertex]
 
@@ -60,6 +63,6 @@ class Greedy(agent.Agent):
 		else:
 			move_description = self.move(graph)
 			save_description = ''
-			if len(self.sequence) is 0:
+			if len(self.sequence) == 0:
 				save_description = self.save()
-			return save_description + ","+ move_description
+			return save_description + "," + move_description
