@@ -9,6 +9,9 @@ class Greedy(agent.Agent):
 		super().__init__(vertex)
 		self.sequence = []
 		self.in_edge_progress = 0
+		if self.current_vertex.num_of_people > 0:
+			save_description = self.save()
+			print(save_description)
 
 	def is_terminated(self):
 		return self.terminated
@@ -27,17 +30,18 @@ class Greedy(agent.Agent):
 		amount_of_people = self.current_vertex.num_of_people
 		self.score = self.score + amount_of_people
 		self.current_vertex.num_of_people = 0
-		move_description = "SAVED " + str(amount_of_people)
+		move_description = "saved " + str(amount_of_people) + " from " + self.current_vertex.name
 		return move_description
 
 	def act(self, graph):
 		if self.terminated:
 			return "TERMINATED"
 
-		if len(self.sequence) == 0:
-			save_description = ""
-			if self.current_vertex.num_of_people > 0:
-				save_description = self.save()
+		if self.in_edge_progress > 0:
+			self.in_edge_progress = self.in_edge_progress - 1
+			return "IN EDGE PROGRESS: " + str(self.in_edge_progress + 1)
+
+		elif len(self.sequence) == 0:
 			distances, prevs = g.run_dijkstra(graph, self.current_vertex)
 			min_distance = sys.maxsize
 			destination = None
@@ -45,7 +49,6 @@ class Greedy(agent.Agent):
 				if vertex.num_of_people > 0 and min_distance > distances[vertex]:
 					destination = vertex
 					min_distance = distances[vertex]
-
 			if destination is None:
 				self.terminated = True
 				return "TERMINATED"
@@ -54,11 +57,12 @@ class Greedy(agent.Agent):
 				while vertex_in_path is not self.current_vertex:
 					self.sequence.insert(0, vertex_in_path)
 					vertex_in_path = prevs[vertex_in_path]
-				return save_description + "," + self.move(graph)
+
+				return self.move(graph)
 
 		elif self.in_edge_progress > 0:
 			self.in_edge_progress = self.in_edge_progress - 1
-			return "IN EDGE PROGRESS: " + str(self.in_edge_progress)
+			return "IN EDGE PROGRESS: " + str(self.in_edge_progress + 1)
 
 		else:
 			move_description = self.move(graph)
