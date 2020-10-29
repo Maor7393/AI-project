@@ -31,8 +31,6 @@ class Graph(object):
             if neighbor[0].name == vertex2.name:
                 return neighbor[1]
 
-
-
     def vertex_exists(self, vertex):
         return vertex.name in self.vertices_names()
 
@@ -98,19 +96,6 @@ def run_dijkstra(g, source):
                 update_priority(priority_queue, neighbor, distances_dict)
 
     return distances_dict, prev_dict
-
-    # while Q is not empty:                      // The main loop
-    # 15         u ← Q.extract_min()                    // Remove and return best vertex
-    # 16         for each neighbor v of u:              // only v that are still in Q
-    # 17             alt ← dist[u] + length(u, v)
-    # 18             if alt < dist[v]
-    # 19                 dist[v] ← alt
-    # 20                 prev[v] ← u
-    # 21                 Q.decrease_priority(v, alt)
-    # 22
-    # 23     return dist, prev
-
-    pass
 
 
 def generate_graph(file_name):
