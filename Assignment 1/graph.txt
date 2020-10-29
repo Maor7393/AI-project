@@ -4,4 +4,5 @@ V Bukarest 1
 V Varna 3            
 V Kfar-Hes 2
 E Arad Bukarest 1
-E Bukarest Varna 1
+E Bukarest Varna 2
+E Arad Varna 7

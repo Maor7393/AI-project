@@ -16,6 +16,13 @@ class Graph(object):
     def edges(self):
         return self.generate_edges()
 
+    def get_vertex(self, name):
+        vertex_to_ret = None
+        for vertex in self.vertices():
+            if vertex.name == name:
+                vertex_to_ret = vertex
+        return vertex_to_ret
+
     def vertices_names(self):
         name_list = []
         for vertex in self.vertices():
@@ -78,13 +85,23 @@ def run_dijkstra(g, source):
     distances_dict = {}
     prev_dict = {}
     infinity = sys.maxsize
+    for vertex in g.vertices():
+        print(vertex)
 
     for vertex in g.vertices():
         if vertex.name != source.name:
-            distances_dict[vertex.name] = infinity
+            distances_dict[vertex] = infinity
             prev_dict[vertex] = None
-        distance = distances_dict[vertex.name]
+            infinity = infinity - 1
+        else:
+            distances_dict[source] = 0
+
+        distance = distances_dict[vertex]
+        print(distance)
+        print(vertex)
         priority_queue.put((distance, vertex))
+        print("SIZE"+str(priority_queue.qsize()))
+
 
     while not priority_queue.empty():
         min_vertex = priority_queue.get()
