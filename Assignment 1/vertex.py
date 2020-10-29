@@ -5,3 +5,14 @@ class Vertex (object):
 
     def __str__(self):
         return "["+self.name + ", " + str(self.number_of_people)+"]"
+
+
+class VertexWrapper(object):
+
+    def __init__(self, vertex, attribute):
+        self.vertex = vertex
+        self.attribute = attribute
+
+    def __lt__(self, other):
+        print(self.attribute - other.attribute)
+        return (self.attribute - other.attribute

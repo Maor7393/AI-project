@@ -68,16 +68,17 @@ class Graph(object):
         return res
 
 
-def update_priority(priority_queue, neighbor, distances_dict):
+def update_priority(priority_queue, neighbor, new_distance):
     removed_vertices = []
     while not priority_queue.empty():
-        vertex = priority_queue.get()
-        removed_vertices.append(vertex)
-        if vertex.name == neighbor.name:
+        vertex_wrapper = priority_queue.get()
+        removed_vertices.append(vertex_wrapper)
+        if vertex_wrapper.vertex.name == neighbor.name:
+            vertex_wrapper.attribute = new_distance
             break
     while len(removed_vertices) > 0:
-        vertex = removed_vertices.pop()
-        priority_queue.put(distances_dict[vertex], vertex)
+        vertex_wrapper = removed_vertices.pop()
+        priority_queue.put(vertex_wrapper)
 
 
 def run_dijkstra(g, source):
@@ -86,31 +87,23 @@ def run_dijkstra(g, source):
     prev_dict = {}
     infinity = sys.maxsize
     for vertex in g.vertices():
-        print(vertex)
-
-    for vertex in g.vertices():
         if vertex.name != source.name:
             distances_dict[vertex] = infinity
             prev_dict[vertex] = None
-            infinity = infinity - 1
         else:
-            distances_dict[source] = 0
-
+            distances_dict[vertex] = 0
         distance = distances_dict[vertex]
-        print(distance)
-        print(vertex)
-        priority_queue.put((distance, vertex))
-        print("SIZE"+str(priority_queue.qsize()))
-
+        priority_queue.put(v.VertexWrapper(vertex, distance))
 
     while not priority_queue.empty():
-        min_vertex = priority_queue.get()
-        for neighbor in g.get_neighbors(min_vertex):
-            alt = distances_dict[min_vertex] + g.edge_weight(min_vertex, neighbor)
-            if alt < distances_dict[neighbor.vertex]:
+        min_vertex_wrapper = priority_queue.get()
+        print(min_vertex_wrapper.vertex)
+        for neighbor in map(lambda neighbor_tup: neighbor_tup[0], g.get_neighbors(min_vertex_wrapper.vertex)):
+            alt = distances_dict[min_vertex_wrapper.vertex] + g.edge_weight(min_vertex_wrapper.vertex, neighbor)
+            if alt < distances_dict[neighbor]:
                 distances_dict[neighbor] = alt
-                prev_dict[neighbor] = min_vertex
-                update_priority(priority_queue, neighbor, distances_dict)
+                prev_dict[neighbor] = min_vertex_wrapper.vertex
+                update_priority(priority_queue, neighbor, distances_dict[neighbor])
 
     return distances_dict, prev_dict
 

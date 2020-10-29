@@ -3,6 +3,7 @@ import sys
 import graph as g
 
 
+
 class Greedy(agent.Agent):
 
 	def __init__(self, vertex):
