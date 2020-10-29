@@ -14,5 +14,4 @@ class VertexWrapper(object):
         self.attribute = attribute
 
     def __lt__(self, other):
-        print(self.attribute - other.attribute)
-        return (self.attribute - other.attribute
+        return self.attribute - other.attribute
