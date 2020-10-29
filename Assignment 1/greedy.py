@@ -39,34 +39,29 @@ class Greedy(agent.Agent):
 
 		if self.in_edge_progress > 0:
 			self.in_edge_progress = self.in_edge_progress - 1
-			return "IN EDGE PROGRESS: " + str(self.in_edge_progress + 1)
+			return "IN EDGE PROGRESS: " + str(self.in_edge_progress)
 
-		elif len(self.sequence) == 0:
+		elif len(self.sequence) > 0:
+			save_description = ''
+			if self.current_vertex.num_of_people > 0:
+				save_description = self.save()
+			move_description = self.move(graph)
+			return save_description + "," + move_description
+
+		if len(self.sequence) == 0:
 			distances, prevs = g.run_dijkstra(graph, self.current_vertex)
 			min_distance = sys.maxsize
 			destination = None
 			for vertex in distances.keys():
-				if vertex.num_of_people > 0 and min_distance > distances[vertex]:
+				if vertex.num_of_people > 0 and min_distance > distances[vertex] and vertex is not self.current_vertex:
 					destination = vertex
 					min_distance = distances[vertex]
 			if destination is None:
 				self.terminated = True
-				return "TERMINATED"
+				return self.save() + ", " + "TERMINATED"
 			else:
 				vertex_in_path = destination
 				while vertex_in_path is not self.current_vertex:
 					self.sequence.insert(0, vertex_in_path)
 					vertex_in_path = prevs[vertex_in_path]
-
-				return self.move(graph)
-
-		elif self.in_edge_progress > 0:
-			self.in_edge_progress = self.in_edge_progress - 1
-			return "IN EDGE PROGRESS: " + str(self.in_edge_progress + 1)
-
-		else:
-			move_description = self.move(graph)
-			save_description = ''
-			if len(self.sequence) == 0:
-				save_description = self.save()
-			return save_description + "," + move_description
+				return "expanded"
