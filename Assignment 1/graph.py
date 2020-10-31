@@ -10,30 +10,30 @@ class Graph(object):
             graph_dict = {}
         self.graph_dict = graph_dict
 
-    def vertices(self):
+    def get_vertices(self):
         return list(self.graph_dict.keys())
 
-    def edges(self):
+    def get_edges(self):
         return self.generate_edges()
 
     def get_vertex(self, name):
         vertex_to_ret = None
-        for vertex in self.vertices():
+        for vertex in self.get_vertices():
             if vertex.name == name:
                 vertex_to_ret = vertex
         return vertex_to_ret
 
     def vertices_names(self):
         name_list = []
-        for vertex in self.vertices():
+        for vertex in self.get_vertices():
             name_list.append(vertex.name)
         return name_list
 
-    def get_neighbors(self, vertex):
+    def expand(self, vertex):
         return self.graph_dict[vertex]
 
-    def edge_weight(self, vertex1, vertex2):
-        neighbors = self.get_neighbors(vertex1)
+    def get_edge_weight(self, vertex1, vertex2):
+        neighbors = self.expand(vertex1)
         for neighbor in neighbors:
             if neighbor[0].name == vertex2.name:
                 return neighbor[1]
@@ -46,10 +46,8 @@ class Graph(object):
             self.graph_dict[vertex] = []
 
     def add_edge(self, vertex1, vertex2, weight):
-        if self.vertex_exists(vertex1):
-            self.graph_dict[vertex1].append((vertex2, weight))
-        else:
-            self.graph_dict[vertex1] = [(vertex2, weight)]
+        self.graph_dict[vertex1].append((vertex2, weight))
+        self.graph_dict[vertex2].append((vertex1, weight))
 
     def generate_edges(self):
         edges = []
@@ -67,44 +65,43 @@ class Graph(object):
             res += "("+edge[0].name + ", " + edge[1].name + ", " + str(edge[2]) + "), "
         return res
 
+# def update_priority(priority_queue, neighbor, new_distance):
+#     removed_vertices = []
+#     while not priority_queue.empty():
+#         vertex_wrapper = priority_queue.get()
+#         removed_vertices.append(vertex_wrapper)
+#         if vertex_wrapper.vertex.name == neighbor.name:
+#             vertex_wrapper.attribute = new_distance
+#             break
+#     while len(removed_vertices) > 0:
+#         vertex_wrapper = removed_vertices.pop()
+#         priority_queue.put(vertex_wrapper)
 
-def update_priority(priority_queue, neighbor, new_distance):
-    removed_vertices = []
-    while not priority_queue.empty():
-        vertex_wrapper = priority_queue.get()
-        removed_vertices.append(vertex_wrapper)
-        if vertex_wrapper.vertex.name == neighbor.name:
-            vertex_wrapper.attribute = new_distance
-            break
-    while len(removed_vertices) > 0:
-        vertex_wrapper = removed_vertices.pop()
-        priority_queue.put(vertex_wrapper)
-
-
-def run_dijkstra(g, source):
-    priority_queue = PriorityQueue()
-    distances_dict = {}
-    prev_dict = {}
-    infinity = sys.maxsize
-    for vertex in g.vertices():
-        if vertex.name != source.name:
-            distances_dict[vertex] = infinity
-            prev_dict[vertex] = None
-        else:
-            distances_dict[vertex] = 0
-        distance = distances_dict[vertex]
-        priority_queue.put(v.VertexWrapper(vertex, distance))
-
-    while not priority_queue.empty():
-        min_vertex_wrapper = priority_queue.get()
-        for neighbor in map(lambda neighbor_tup: neighbor_tup[0], g.get_neighbors(min_vertex_wrapper.vertex)):
-            alt = distances_dict[min_vertex_wrapper.vertex] + g.edge_weight(min_vertex_wrapper.vertex, neighbor)
-            if alt < distances_dict[neighbor]:
-                distances_dict[neighbor] = alt
-                prev_dict[neighbor] = min_vertex_wrapper.vertex
-                update_priority(priority_queue, neighbor, distances_dict[neighbor])
-
-    return distances_dict, prev_dict
+#
+# def run_dijkstra(g, source):
+#     priority_queue = PriorityQueue()
+#     distances_dict = {}
+#     prev_dict = {}
+#     infinity = sys.maxsize
+#     for vertex in g.vertices():
+#         if vertex.name != source.name:
+#             distances_dict[vertex] = infinity
+#             prev_dict[vertex] = None
+#         else:
+#             distances_dict[vertex] = 0
+#         distance = distances_dict[vertex]
+#         priority_queue.put(v.VertexWrapper(vertex, distance))
+#
+#     while not priority_queue.empty():
+#         min_vertex_wrapper = priority_queue.get()
+#         for neighbor in map(lambda neighbor_tup: neighbor_tup[0], g.get_neighbors(min_vertex_wrapper.vertex)):
+#             alt = distances_dict[min_vertex_wrapper.vertex] + g.edge_weight(min_vertex_wrapper.vertex, neighbor)
+#             if alt < distances_dict[neighbor]:
+#                 distances_dict[neighbor] = alt
+#                 prev_dict[neighbor] = min_vertex_wrapper.vertex
+#                 update_priority(priority_queue, neighbor, distances_dict[neighbor])
+#
+#     return distances_dict, prev_dict
 
 
 

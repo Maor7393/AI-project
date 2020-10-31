@@ -1,7 +1,5 @@
 import graph as g
 import vertex as v
-from greedy import Greedy
-
 
 def generate_program_variables(file_name):
     output_graph = g.Graph()

@@ -9,24 +9,7 @@ class Vertex (object):
 
 class VertexWrapper(object):
 
-    def __init__(self, vertex, attribute):
+    def __init__(self, vertex, parent_wrapper, acc_weight):
         self.vertex = vertex
-        self.attribute = attribute
-
-    def __lt__(self, other):
-        if self.attribute < other.attribute:
-            return True
-        else:
-            return False
-
-    def __gt__(self, other):
-        if self.attribute > other.attribute:
-            return True
-        else:
-            return False
-
-    def __eq__(self, other):
-        if self.attribute == other.attribute:
-            return True
-        else:
-            return False
+        self.parent_wrapper = parent_wrapper
+        self.acc_weight = acc_weight

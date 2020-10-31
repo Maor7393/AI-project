@@ -1,9 +1,9 @@
-# A simple implementation of Priority Queue
-# using Queue.
-import sys
+
 class PriorityQueue(object):
-    def __init__(self):
+
+    def __init__(self, f):
         self.queue = []
+        self.f = f
 
     def __str__(self):
         return ' '.join([str(i) for i in self.queue])
@@ -22,7 +22,7 @@ class PriorityQueue(object):
             return None
         min_element_index = 0
         for i in range(len(self.queue)):
-            if self.queue[i] < self.queue[min_element_index]:
+            if self.f(self.queue[i]) < self.f(self.queue[min_element_index]):
                 min_element_index = i
         item = self.queue[min_element_index]
         del self.queue[min_element_index]
