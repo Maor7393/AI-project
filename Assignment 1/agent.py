@@ -69,7 +69,6 @@ class AStarAgent(Agent):
 		return self.do_search(graph, fringe)
 
 class RealTimeAStarAgent(Agent):
-	# TODO: implement this
 
 
 

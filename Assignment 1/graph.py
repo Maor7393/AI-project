@@ -32,6 +32,9 @@ class Graph(object):
     def expand(self, vertex):
         return self.graph_dict[vertex]
 
+    def expand_just_vertices(self, vertex):
+        return map(lambda neighbor_tup: neighbor_tup[0], self.expand(vertex))
+
     def get_edge_weight(self, vertex1, vertex2):
         neighbors = self.expand(vertex1)
         for neighbor in neighbors:
@@ -46,8 +49,9 @@ class Graph(object):
             self.graph_dict[vertex] = []
 
     def add_edge(self, vertex1, vertex2, weight):
-        self.graph_dict[vertex1].append((vertex2, weight))
-        self.graph_dict[vertex2].append((vertex1, weight))
+        if vertex2 not in self.expand_just_vertices(vertex1) and vertex1 not in self.expand_just_vertices(vertex2):
+            self.graph_dict[vertex1].append((vertex2, weight))
+            self.graph_dict[vertex2].append((vertex1, weight))
 
     def generate_edges(self):
         edges = []
