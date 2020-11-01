@@ -1,11 +1,6 @@
-D 8
-V Arad 1
-V Streets 0
-V Bukarest 0
-V Varna 3            
-V Kfar-Hes 2
-E Arad Bukarest 3
-E Bukarest Varna 4
-E Arad Varna 7
-E Arad Kfar-Hes 1
-E Kfar-Hes Bukarest 1
+D 7
+V v1 1
+V v2 1
+V v3 1
+E v1 v2 1
+E v2 v3 2

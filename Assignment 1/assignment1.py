@@ -1,5 +1,6 @@
 import graph as g
 import vertex as v
+import copy
 
 def generate_program_variables(file_name):
     output_graph = g.Graph()
@@ -29,14 +30,24 @@ def generate_program_variables(file_name):
 
 
 if __name__ == "__main__":
-    world, total_time = generate_program_variables("graph.txt")
-    distances, prevs = g.run_dijkstra(world, world.get_vertex("Arad"))
-    agent = Greedy(world.get_vertex("Arad"))
-    time_passed = 0
-    while not agent.is_terminated() and time_passed < total_time:
-        message = agent.act(world)
-        print(message)
-        time_passed = time_passed + 1
 
-    print("Agent Score: " + str(agent.score))
+    world, total_time = generate_program_variables("graph.txt")
     print(world)
+    essential_vertices =[]
+    for vertex in world.get_vertices():
+        if vertex.num_of_people > 0:
+            essential_vertices.append(vertex)
+    zipped = g.zip_graph(essential_vertices, world)
+    print(zipped)
+    print(world.get_vertices())
+    print(zipped.get_vertices())
+    # distances, prevs = g.run_dijkstra(world, world.get_vertex("Arad"))
+    # agent = Greedy(world.get_vertex("Arad"))
+    # time_passed = 0
+    # while not agent.is_terminated() and time_passed < total_time:
+    #     message = agent.act(world)
+    #     print(message)
+    #     time_passed = time_passed + 1
+
+    # print("Agent Score: " + str(agent.score))
+    # print(world)

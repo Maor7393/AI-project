@@ -1,6 +1,7 @@
 import vertex as v
 import sys
 from queue import PriorityQueue
+import copy
 
 
 class Graph(object):
@@ -66,8 +67,57 @@ class Graph(object):
             res += str(k) + ", "
         res += "\nedges: "
         for edge in self.generate_edges():
-            res += "("+edge[0].name + ", " + edge[1].name + ", " + str(edge[2]) + "), "
+            res += "(" + edge[0].name + ", " + edge[1].name + ", " + str(edge[2]) + "), "
         return res
+
+    def copy_graph(self):
+        new_graph = Graph()
+        for vertex in self.get_vertices():
+            new_graph.graph_dict[vertex] = self.expand(vertex)
+        return new_graph
+
+    def remove_unessential_vertices(self, unessential_vertices_array):
+        for vertex in unessential_vertices_array:
+            self.delete_all_occurrences(vertex)
+
+    def delete_all_occurrences(self, vertex):
+        for u in self.graph_dict.keys():
+            neighbors_tuples = self.graph_dict[u]
+            for tup in neighbors_tuples:
+                if tup[0] == vertex:
+                    neighbors_tuples.remove(tup)
+        self.graph_dict.pop(vertex)
+
+    def zip_edges(self):
+        for vertex in self.get_vertices():
+            min_edges = {}
+            neighbors_tuples = self.expand(vertex)
+            for neighbor_tup in neighbors_tuples:
+                if min_edges.get(neighbor_tup[0]) is not None:
+                    if min_edges[neighbor_tup[0]] > neighbor_tup[1]:
+                        min_edges[neighbor_tup[0]] = neighbor_tup[1]
+                else:
+                    min_edges[neighbor_tup[0]] = neighbor_tup[1]
+            self.graph_dict[vertex] = [(key, val) for key, val in min_edges.items()]
+
+    def connect_all_neighbors(self, vertex):
+        neighbor_tuples = self.expand(vertex)
+        for neighbor_tuple in neighbor_tuples:
+            for other_neighbor_tuple in neighbor_tuples:
+                if not neighbor_tuple == other_neighbor_tuple:
+                    both_edges_weight = neighbor_tuple[1] + other_neighbor_tuple[1]
+                    self.add_edge(neighbor_tuple[0], other_neighbor_tuple[0], both_edges_weight)
+
+
+def zip_graph(essential_vertices, original_graph: Graph):
+    essential_graph = original_graph.copy_graph()
+    for vertex in essential_graph.get_vertices():
+        if vertex not in essential_vertices:
+            essential_graph.connect_all_neighbors(vertex)
+    essential_graph.remove_unessential_vertices(
+        filter(lambda u: u not in essential_vertices, essential_graph.get_vertices()))
+    essential_graph.zip_edges()
+    return essential_graph
 
 # def update_priority(priority_queue, neighbor, new_distance):
 #     removed_vertices = []
@@ -106,6 +156,3 @@ class Graph(object):
 #                 update_priority(priority_queue, neighbor, distances_dict[neighbor])
 #
 #     return distances_dict, prev_dict
-
-
-
