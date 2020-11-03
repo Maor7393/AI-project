@@ -1,6 +1,9 @@
 import graph as g
 import vertex as v
+import agent as a
+import state as s
 import copy
+
 
 def generate_program_variables(file_name):
     output_graph = g.Graph()
@@ -16,9 +19,9 @@ def generate_program_variables(file_name):
         if element_type == 'V':
             name = line[1]
             number_of_people = int(line[2])
-            vertex = v.Vertex(name, number_of_people)
-            name_vertices_dict[vertex.name] = vertex
-            output_graph.add_vertex(vertex)
+            u = v.Vertex(name, number_of_people)
+            name_vertices_dict[u.name] = u
+            output_graph.add_vertex(u)
         elif element_type == 'E':
             source_name = line[1]
             target_name = line[2]
@@ -29,18 +32,28 @@ def generate_program_variables(file_name):
     return output_graph, time
 
 
-if __name__ == "__main__":
+def mst_heuristic(vertex_wrapper):
+    unsaved_vertices = vertex_wrapper.state.get_unsaved_vertices()
+    zipped_graph = g.zip_graph(vertex_wrapper.state.world, unsaved_vertices)
+    mst_zipped = zipped_graph.MST()
+    print(mst_zipped.get_sum_weights())
+    return mst_zipped.get_sum_weights()
 
+
+if __name__ == "__main__":
     world, total_time = generate_program_variables("graph.txt")
     print(world)
-    essential_vertices =[]
+    essential_vertices = []
     for vertex in world.get_vertices():
         if vertex.num_of_people > 0:
             essential_vertices.append(vertex)
-    zipped = g.zip_graph(essential_vertices, world)
-    print(zipped)
-    print(world.get_vertices())
-    print(zipped.get_vertices())
+    zipped = g.zip_graph(world, [world.get_vertex("v1"), world.get_vertex("v4")])
+    state = s.State(zipped, zipped.get_vertex("v1"), {zipped.get_vertex("v1"): False, zipped.get_vertex("v4"): False})
+    greedy = a.GreedyAgent(state, mst_heuristic)
+    print(greedy.search()[0])
+    print(greedy.act_sequence)
+
+
     # distances, prevs = g.run_dijkstra(world, world.get_vertex("Arad"))
     # agent = Greedy(world.get_vertex("Arad"))
     # time_passed = 0

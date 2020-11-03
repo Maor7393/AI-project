@@ -1,77 +1,73 @@
 import vertex as v
 import graph as g
+import state as s
 import priority_queue as pq
 
 
-def generate_sequence(graph: g.Graph, vertex_wrapper):
+def generate_sequence(world: g.Graph, vertex_wrapper):
 	if vertex_wrapper.parent is None:
-		return [vertex_wrapper.vertex]
-	edge_weight = graph.get_edge_weight(vertex_wrapper.vertex, vertex_wrapper.parent.vertex)
+		return [vertex_wrapper.state.current_vertex]
+	edge_weight = world.get_edge_weight(vertex_wrapper.state.vertex, vertex_wrapper.parent.state.vertex)
 	current_move = []
 	for i in range(edge_weight):
 		current_move.append(vertex_wrapper.vertex)
-	return generate_sequence(graph, vertex_wrapper.parent).extend(current_move)
+	return generate_sequence(world, vertex_wrapper.parent).extend(current_move)
 
 
 def g(vertex_wrapper: v.VertexWrapper):
 	return vertex_wrapper.acc_weight
 
 
+def goal_test(state):
+	return state.amount_to_save() == 0
+
+
 class Agent:
 
-	def __init__(self, state):
+	def __init__(self, state, h):
 		self.state = state
+		self.h = h
 		self.score = 0
 		self.terminated = False
 		self.act_sequence = []
 
-	def is_terminated(self):
-		return self.terminated
-
-	def goal_test(self):
-		return self.state.amount_to_save() == 0
-
-	def do_search(self, graph, fringe):
+	def do_search(self, world, fringe):
 		counter = 0
-		fringe.insert(v.VertexWrapper(self.state.current_vertex, None, 0))
+		fringe.insert(v.VertexWrapper(self.state, None, 0))
 		while not fringe.is_empty:
-			next_vertex_wrapper = fringe.pop()
-			next_vertex = next_vertex_wrapper.vertex
-			acc_weight = next_vertex_wrapper.acc_weight
-			if next_vertex.num_of_people > 0:
-				self.state.save_vertex(next_vertex)
-			if self.goal_test():
-				self.act_sequence = generate_sequence(graph, next_vertex_wrapper)
+			current_vertex_wrapper = fringe.pop()
+			current_vertex = current_vertex_wrapper.state.current_vertex
+			acc_weight = current_vertex_wrapper.acc_weight
+			current_vertex_wrapper.state.save_current_vertex()
+			if goal_test(current_vertex_wrapper.state):
+				self.act_sequence = generate_sequence(world, current_vertex_wrapper)
 				return counter, True
 			counter += 1
-			for neighbor_tup in graph.expand(next_vertex):
-				fringe.insert(v.VertexWrapper(neighbor_tup[0], next_vertex_wrapper, acc_weight + neighbor_tup[1]))
+			for neighbor_tup in world.expand(current_vertex):
+				neighbor_state = s.State(world, neighbor_tup[0], current_vertex_wrapper.state.vertices_status)
+				neighbor_vertex_wrapper = v.VertexWrapper(neighbor_state, current_vertex_wrapper, acc_weight + neighbor_tup[1])
+				fringe.insert(neighbor_vertex_wrapper)
 		return counter, False
 
 
 class GreedyAgent(Agent):
 
-	def __init__(self, state):
-		super().__init__(state)
+	def __init__(self, state, h):
+		super().__init__(state, h)
 
-	def search(self, graph, h):
-		fringe = pq.PriorityQueue(h)
-		return self.do_search(graph, fringe)
+	def search(self):
+		fringe = pq.PriorityQueue(self.h)
+		return self.do_search(self.state.world, fringe)
 
 
 class AStarAgent(Agent):
 
-	def __int__(self, state):
-		super().__init__(state)
+	def __int__(self, state, h):
+		super().__init__(state, h)
 
-	def search(self, graph, h):
-		fringe = pq.PriorityQueue(lambda x: h(x) + g(x))
-		return self.do_search(graph, fringe)
-
-class RealTimeAStarAgent(Agent):
-
-
-
+	def search(self):
+		fringe = pq.PriorityQueue(lambda x: self.h(x) + g(x))
+		return self.do_search(self.state.world, fringe)
 
 # def move(self, graph):
 # 	next_vertex = self.sequence[0]

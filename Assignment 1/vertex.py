@@ -9,7 +9,7 @@ class Vertex (object):
 
 class VertexWrapper(object):
 
-    def __init__(self, vertex, parent_wrapper, acc_weight):
-        self.vertex = vertex
+    def __init__(self, state, parent_wrapper, acc_weight):
+        self.state = state
         self.parent_wrapper = parent_wrapper
         self.acc_weight = acc_weight

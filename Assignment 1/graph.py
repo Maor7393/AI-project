@@ -42,8 +42,30 @@ class Graph(object):
             if neighbor[0].name == vertex2.name:
                 return neighbor[1]
 
+    def get_closest_neighbor(self, vertex):
+        min_weight = sys.maxsize
+        min_neighbor_tup = None
+        for neighbor_tup in self.expand(vertex):
+            if min_weight >= neighbor_tup[1]:
+                min_weight = neighbor_tup[1]
+                min_neighbor_tup = neighbor_tup
+        return min_neighbor_tup
+
     def vertex_exists(self, vertex):
         return vertex.name in self.vertices_names()
+
+    def edge_exists(self,vertex1,vertex2):
+        neighbor_list = self.expand(vertex1)
+        for neighbor_tup in neighbor_list:
+            if vertex2 == neighbor_tup[0]:
+                return True
+        return False
+
+    def get_sum_weights(self):
+        sum_weight_mst = 0
+        for edge in self.get_edges():
+            sum_weight_mst += edge[2]
+        return sum_weight_mst / 2
 
     def add_vertex(self, vertex):
         if not self.vertex_exists(vertex):
@@ -65,9 +87,12 @@ class Graph(object):
         res = "vertices: "
         for k in self.graph_dict:
             res += str(k) + ", "
+
+        res = res[:len(res)-2]
         res += "\nedges: "
         for edge in self.generate_edges():
             res += "(" + edge[0].name + ", " + edge[1].name + ", " + str(edge[2]) + "), "
+        res = res[:len(res)-2]
         return res
 
     def copy_graph(self):
@@ -108,8 +133,35 @@ class Graph(object):
                     both_edges_weight = neighbor_tuple[1] + other_neighbor_tuple[1]
                     self.add_edge(neighbor_tuple[0], other_neighbor_tuple[0], both_edges_weight)
 
+    def get_lowest_cost_edge_between_sets(self, in_set, out_set):
+        min_edge = None
+        min_weight = sys.maxsize
+        for in_vertex in in_set:
+            for out_vertex in out_set:
+                if self.edge_exists(in_vertex, out_vertex) and min_weight >= self.get_edge_weight(in_vertex, out_vertex):
+                    current_edge_weight = self.get_edge_weight(in_vertex, out_vertex)
+                    min_weight = current_edge_weight
+                    min_edge = (in_vertex, out_vertex, min_weight)
+        return min_edge
 
-def zip_graph(essential_vertices, original_graph: Graph):
+    def MST(self):
+        mst = Graph()
+        in_set = {self.get_vertices()[0]}
+        out_set = set(self.get_vertices()[1:])
+        edge_set = set()
+        while len(out_set) > 0:
+            edge = self.get_lowest_cost_edge_between_sets(in_set, out_set)
+            edge_set.add(edge)
+            in_set.add(edge[1])
+            out_set.remove(edge[1])
+        for vertex in in_set:
+            mst.add_vertex(vertex)
+        for edge in edge_set:
+            mst.add_edge(*edge)
+        return mst
+
+
+def zip_graph(original_graph: Graph, essential_vertices ):
     essential_graph = original_graph.copy_graph()
     for vertex in essential_graph.get_vertices():
         if vertex not in essential_vertices:
