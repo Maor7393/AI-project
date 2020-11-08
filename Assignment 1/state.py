@@ -14,13 +14,13 @@ class State:
 	def get_unsaved_vertices(self):
 		unsaved = []
 		for vertex in self.vertices_status.keys():
-			if self.vertices_status[vertex]:
+			if not self.vertices_status[vertex]:
 				unsaved.append(vertex)
 		return unsaved
 
 	def amount_to_save(self):
 		counter = 0
 		for key in self.vertices_status.keys():
-			if self.vertices_status[key]:
+			if not self.vertices_status[key]:
 				counter += 1
 		return counter

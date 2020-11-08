@@ -1,5 +1,6 @@
 import graph as g
 import vertex as v
+import priority_queue as pq
 import agent as a
 import state as s
 import copy
@@ -36,13 +37,15 @@ def mst_heuristic(vertex_wrapper):
     unsaved_vertices = vertex_wrapper.state.get_unsaved_vertices()
     zipped_graph = g.zip_graph(vertex_wrapper.state.world, unsaved_vertices)
     mst_zipped = zipped_graph.MST()
-    print(mst_zipped.get_sum_weights())
     return mst_zipped.get_sum_weights()
 
 
 if __name__ == "__main__":
     world, total_time = generate_program_variables("graph.txt")
-    print(world)
+    print('world: ' + str(world))
+    zipped = g.zip_graph(world, [world.get_vertex("v1"), world.get_vertex("v4")])
+    zipped2 = g.zip_graph(zipped, [world.get_vertex("v4")])
+    fringe = pq.PriorityQueue(mst_heuristic)
     essential_vertices = []
     for vertex in world.get_vertices():
         if vertex.num_of_people > 0:
@@ -50,8 +53,8 @@ if __name__ == "__main__":
     zipped = g.zip_graph(world, [world.get_vertex("v1"), world.get_vertex("v4")])
     state = s.State(zipped, zipped.get_vertex("v1"), {zipped.get_vertex("v1"): False, zipped.get_vertex("v4"): False})
     greedy = a.GreedyAgent(state, mst_heuristic)
-    print(greedy.search()[0])
-    print(greedy.act_sequence)
+    print(greedy.search())
+    print('sequence: ' + str(greedy.act_sequence))
 
 
     # distances, prevs = g.run_dijkstra(world, world.get_vertex("Arad"))

@@ -5,13 +5,19 @@ import priority_queue as pq
 
 
 def generate_sequence(world: g.Graph, vertex_wrapper):
-	if vertex_wrapper.parent is None:
+	if vertex_wrapper.parent_wrapper is None:
 		return [vertex_wrapper.state.current_vertex]
-	edge_weight = world.get_edge_weight(vertex_wrapper.state.vertex, vertex_wrapper.parent.state.vertex)
+	edge_weight = world.get_edge_weight(vertex_wrapper.state.current_vertex, vertex_wrapper.parent_wrapper.state.current_vertex)
+	print(world)
+	print(vertex_wrapper.state.current_vertex, vertex_wrapper.parent_wrapper.state.current_vertex)
+	print('edge weight: ' + str(edge_weight))
 	current_move = []
 	for i in range(edge_weight):
-		current_move.append(vertex_wrapper.vertex)
-	return generate_sequence(world, vertex_wrapper.parent).extend(current_move)
+		current_move.append(vertex_wrapper.state.current_vertex)
+	current_sequence = generate_sequence(world, vertex_wrapper.parent_wrapper)
+	current_sequence.extend(current_move)
+	return current_sequence
+
 
 
 def g(vertex_wrapper: v.VertexWrapper):
@@ -34,7 +40,7 @@ class Agent:
 	def do_search(self, world, fringe):
 		counter = 0
 		fringe.insert(v.VertexWrapper(self.state, None, 0))
-		while not fringe.is_empty:
+		while not fringe.is_empty():
 			current_vertex_wrapper = fringe.pop()
 			current_vertex = current_vertex_wrapper.state.current_vertex
 			acc_weight = current_vertex_wrapper.acc_weight

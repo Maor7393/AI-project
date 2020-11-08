@@ -98,7 +98,7 @@ class Graph(object):
     def copy_graph(self):
         new_graph = Graph()
         for vertex in self.get_vertices():
-            new_graph.graph_dict[vertex] = self.expand(vertex)
+            new_graph.graph_dict[vertex] = list(self.expand(vertex))
         return new_graph
 
     def remove_unessential_vertices(self, unessential_vertices_array):
@@ -161,13 +161,14 @@ class Graph(object):
         return mst
 
 
-def zip_graph(original_graph: Graph, essential_vertices ):
+
+def zip_graph(original_graph: Graph, essential_vertices):
     essential_graph = original_graph.copy_graph()
     for vertex in essential_graph.get_vertices():
         if vertex not in essential_vertices:
             essential_graph.connect_all_neighbors(vertex)
     essential_graph.remove_unessential_vertices(
-        filter(lambda u: u not in essential_vertices, essential_graph.get_vertices()))
+        list(filter(lambda u: u not in essential_vertices, essential_graph.get_vertices())))
     essential_graph.zip_edges()
     return essential_graph
 
