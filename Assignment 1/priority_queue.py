@@ -15,8 +15,7 @@ class PriorityQueue(object):
     # for inserting an element in the queue
     def insert(self, data):
         self.queue.append(data)
-
-    # for popping an element based on Priority
+# for popping an element based on Priority
     def pop(self):
         if self.is_empty():
             return None

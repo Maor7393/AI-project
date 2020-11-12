@@ -1,12 +1,13 @@
 import vertex as v
 import copy as cp
+import graph as g
+
 
 class State:
 
-	def __init__(self, world, current_vertex: v.Vertex, vertices_status: dict):
+	def __init__(self, current_vertex: v.Vertex, vertices_status: dict):
 		self.current_vertex = current_vertex
 		self.vertices_status = cp.copy(vertices_status)
-		self.world = world
 
 	def save_current_vertex(self):
 		self.vertices_status[self.current_vertex] = True
@@ -24,3 +25,10 @@ class State:
 			if not self.vertices_status[key]:
 				counter += 1
 		return counter
+
+	def update_vertices_status(self, world: g.Graph):
+		for vertex in world.get_vertices():
+			if vertex.num_of_people > 0:
+				self.vertices_status[vertex] = False
+			else:
+				self.vertices_status[vertex] = True

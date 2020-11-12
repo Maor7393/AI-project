@@ -1,8 +1,7 @@
 D 7
-V v1 0
-V v2 0
-V v3 0
-V v4 4
-E v1 v2 2
+V v1 1
+V v2 1
+V v3 1
+E v1 v2 3
 E v2 v3 1
-E v3 v4 5
+E v1 v3 2

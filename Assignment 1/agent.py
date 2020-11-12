@@ -2,12 +2,14 @@ import vertex as v
 import graph as g
 import state as s
 import priority_queue as pq
+from enviroment import Limits
 
 
 def generate_sequence(world: g.Graph, vertex_wrapper):
 	if vertex_wrapper.parent_wrapper is None:
 		return [vertex_wrapper.state.current_vertex]
-	edge_weight = world.get_edge_weight(vertex_wrapper.state.current_vertex, vertex_wrapper.parent_wrapper.state.current_vertex)
+	edge_weight = world.get_edge_weight(vertex_wrapper.state.current_vertex,
+	                                    vertex_wrapper.parent_wrapper.state.current_vertex)
 	print(world)
 	print(vertex_wrapper.state.current_vertex, vertex_wrapper.parent_wrapper.state.current_vertex)
 	print('edge weight: ' + str(edge_weight))
@@ -19,7 +21,6 @@ def generate_sequence(world: g.Graph, vertex_wrapper):
 	return current_sequence
 
 
-
 def g(vertex_wrapper: v.VertexWrapper):
 	return vertex_wrapper.acc_weight
 
@@ -28,16 +29,28 @@ def goal_test(state):
 	return state.amount_to_save() == 0
 
 
+def all_agents_terminated(agent_list):
+	all_terminated = True
+	for agent in agent_list:
+		if not agent.terminated:
+			all_terminated = False
+			break
+	return all_terminated
+
+
 class Agent:
 
-	def __init__(self, state, h):
-		self.state = state
+	def __init__(self, starting_vertex, vertices_status, h):
+		self.state = s.State(starting_vertex, vertices_status)
 		self.h = h
 		self.score = 0
 		self.terminated = False
 		self.act_sequence = []
+		self.num_of_expansions = 0
+		self.num_of_movements = 0
+		self.time_passed = 0
 
-	def do_search(self, world, fringe):
+	def search_with_limit(self, world, fringe, limit):
 		counter = 0
 		fringe.insert(v.VertexWrapper(self.state, None, 0))
 		while not fringe.is_empty():
@@ -45,81 +58,86 @@ class Agent:
 			current_vertex = current_vertex_wrapper.state.current_vertex
 			acc_weight = current_vertex_wrapper.acc_weight
 			current_vertex_wrapper.state.save_current_vertex()
-			if goal_test(current_vertex_wrapper.state):
+			if counter == limit or goal_test(current_vertex_wrapper.state):
 				self.act_sequence = generate_sequence(world, current_vertex_wrapper)
-				return counter, True
+				break
 			counter += 1
 			for neighbor_tup in world.expand(current_vertex):
 				neighbor_state = s.State(world, neighbor_tup[0], current_vertex_wrapper.state.vertices_status)
 				neighbor_vertex_wrapper = v.VertexWrapper(neighbor_state, current_vertex_wrapper, acc_weight + neighbor_tup[1])
 				fringe.insert(neighbor_vertex_wrapper)
-		return counter, False
+		self.num_of_expansions += counter
+		if fringe.is_empty():
+			self.terminated = True
+		return counter
+
+	def search(self, world, limit):
+		pass
+
+	def act_with_limit(self, world, limit):
+		if not self.terminated:
+			self.state.update_vertices_status(world)
+			if len(self.act_sequence) == 0:
+				expansions_in_search = self.search(world, limit)
+				self.time_passed += Limits.T * expansions_in_search
+
+			if not self.terminated and self.time_passed <= Limits.TIME_LIMIT:
+				self.move(world)
+			else:
+				self.terminated = True
+
+	def move(self, world):
+		next_vertex = self.act_sequence[0]
+		self.score += next_vertex.num_of_people
+		next_vertex.num_of_people = 0
+		self.state.current_vertex = next_vertex
+		self.time_passed += 1
+		self.act_sequence = self.act_sequence[1:]
+
+	def __str__(self):
+		print("-------------------------")
+		print(type(self).__name__)
+		print("Score: " + str(self.score))
+		print("Number of expansions: " + str(self.num_of_expansions))
+		print("Number of movements" + str(self.num_of_movements))
+		print("Total time passed" + str(self.time_passed))
+		print("-------------------------")
 
 
 class GreedyAgent(Agent):
 
-	def __init__(self, state, h):
-		super().__init__(state, h)
+	def __init__(self, starting_vertex, vertices_status, h):
+		super().__init__(starting_vertex, vertices_status, h)
 
-	def search(self):
+	def search(self, world, limit):
 		fringe = pq.PriorityQueue(self.h)
-		return self.do_search(self.state.world, fringe)
+		return self.search_with_limit(world, fringe, limit)
+
+	def act(self, world):
+		return self.act_with_limit(world, Limits.GREEDY_LIMIT)
 
 
 class AStarAgent(Agent):
 
-	def __int__(self, state, h):
-		super().__init__(state, h)
+	def __int__(self, starting_vertex, vertices_status, h):
+		super().__init__(starting_vertex, vertices_status, h)
 
-	def search(self):
+	def search(self, world, limit):
 		fringe = pq.PriorityQueue(lambda x: self.h(x) + g(x))
-		return self.do_search(self.state.world, fringe)
+		return self.search_with_limit(world, fringe, limit)
 
-# def move(self, graph):
-# 	next_vertex = self.sequence[0]
-# 	edge_weight = graph.edge_weight(self.current_vertex, next_vertex)
-# 	move_description = "MOVING
-# 	FROM " + self.current_vertex.name + "TO " + next_vertex.name + " : " + str(
-# 		edge_weight)
-# 	self.in_edge_progress = edge_weight
-# 	self.current_vertex = next_vertex
-# 	self.sequence = self.sequence[1:]
-# 	return move_description
-#
-# def save(self):
-# 	amount_of_people = self.current_vertex.num_of_people
-# 	self.score = self.score + amount_of_people
-# 	self.current_vertex.num_of_people = 0
-# 	move_description = "saved " + str(amount_of_people) + " people from " + self.current_vertex.name
-# 	return move_description
-#
-# def act(self, graph):
-# 	if self.terminated:
-# 		return "TERMINATED"
-#
-# 	if self.in_edge_progress > 0:
-# 		self.in_edge_progress = self.in_edge_progress - 1
-# 		return "IN EDGE PROGRESS: " + str(self.in_edge_progress)
-#
-# 	elif len(self.sequence) > 0:
-# 		save_description = self.save()
-# 		move_description = self.move(graph)
-# 		return save_description + "," + move_description
-#
-# 	if len(self.sequence) == 0:
-# 		distances, prevs = g.run_dijkstra(graph, self.current_vertex)
-# 		min_distance = sys.maxsize
-# 		destination = None
-# 		for vertex in distances.keys():
-# 			if vertex.num_of_people > 0 and min_distance > distances[vertex] and vertex is not self.current_vertex:
-# 				destination = vertex
-# 				min_distance = distances[vertex]
-# 		if destination is None:
-# 			self.terminated = True
-# 			return self.save() + ", " + "TERMINATED"
-# 		else:
-# 			vertex_in_path = destination
-# 			while vertex_in_path is not self.current_vertex:
-# 				self.sequence.insert(0, vertex_in_path)
-# 				vertex_in_path = prevs[vertex_in_path]
-# 			return "expanded"
+	def act(self, world):
+		return self.act_with_limit(world, Limits.ASTAR_LIMIT)
+
+
+class RealTimeAStarAgent(Agent):
+
+	def __int__(self, starting_vertex, vertices_status, h):
+		super().__init__(starting_vertex, vertices_status, h)
+
+	def search(self, world, limit):
+		fringe = pq.PriorityQueue(lambda x: self.h(x) + g(x))
+		return self.search_with_limit(world, fringe, limit)
+
+	def act(self, world):
+		return self.act_with_limit(world, Limits.REALTIME_ASTAR_LIMIT)

@@ -1,16 +1,15 @@
-# Objects:
-#   1. Simulator
-#       a. currentTimeUnit
-#       b. deadLine
-#       c. graph 
-#           c.1) edges (with weights)
-#           c.2) nodes (with numberOfPeople)
-#       d. V no-ops
-#       e. Agents - list 
-#       f. 
-#   2. Agent
-#       a. currentVertex (state)
-#       b. act (function)
-#       c. graph
-#       d. score
-#       e. terminated (bool)
+State:
+    current_vertex
+    Previous State
+    Vertices Status, or unsaved vertices
+
+Fringe: states
+
+Act:
+    world
+    limit
+    return next move
+
+Search:
+    problem,limit
+    return sequence
