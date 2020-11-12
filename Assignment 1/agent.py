@@ -8,11 +8,7 @@ from enviroment import Limits
 def generate_sequence(world: g.Graph, vertex_wrapper):
 	if vertex_wrapper.parent_wrapper is None:
 		return [vertex_wrapper.state.current_vertex]
-	edge_weight = world.get_edge_weight(vertex_wrapper.state.current_vertex,
-	                                    vertex_wrapper.parent_wrapper.state.current_vertex)
-	print(world)
-	print(vertex_wrapper.state.current_vertex, vertex_wrapper.parent_wrapper.state.current_vertex)
-	print('edge weight: ' + str(edge_weight))
+	edge_weight = world.get_edge_weight(vertex_wrapper.state.current_vertex, vertex_wrapper.parent_wrapper.state.current_vertex)
 	current_move = []
 	for i in range(edge_weight):
 		current_move.append(vertex_wrapper.state.current_vertex)
@@ -63,9 +59,10 @@ class Agent:
 				break
 			counter += 1
 			for neighbor_tup in world.expand(current_vertex):
-				neighbor_state = s.State(world, neighbor_tup[0], current_vertex_wrapper.state.vertices_status)
+				neighbor_state = s.State(neighbor_tup[0], current_vertex_wrapper.state.vertices_status)
 				neighbor_vertex_wrapper = v.VertexWrapper(neighbor_state, current_vertex_wrapper, acc_weight + neighbor_tup[1])
 				fringe.insert(neighbor_vertex_wrapper)
+
 		self.num_of_expansions += counter
 		if fringe.is_empty():
 			self.terminated = True
@@ -79,29 +76,42 @@ class Agent:
 			self.state.update_vertices_status(world)
 			if len(self.act_sequence) == 0:
 				expansions_in_search = self.search(world, limit)
+				print(type(self).__name__ + " Finished search, output sequence is: " + v.get_vertices_list_as_string(self.act_sequence))
 				self.time_passed += Limits.T * expansions_in_search
 
-			if not self.terminated and self.time_passed <= Limits.TIME_LIMIT:
-				self.move(world)
+			if not self.terminated and self.time_passed < Limits.TIME_LIMIT:
+				self.move()
 			else:
 				self.terminated = True
 
-	def move(self, world):
+	def save_current_vertex(self):
+		print("Saving: " + str(self.state.current_vertex))
+		self.score += self.state.current_vertex.num_of_people
+		self.state.current_vertex.num_of_people = 0
+
+	def move(self):
+		print("------ " + type(self).__name__ + " ------")
+		print("Current sequence: " + v.get_vertices_list_as_string(self.act_sequence))
 		next_vertex = self.act_sequence[0]
-		self.score += next_vertex.num_of_people
-		next_vertex.num_of_people = 0
+		print("Current Vertex: " + str(self.state.current_vertex))
+		print("Moving to: " + str(next_vertex))
+		if next_vertex != self.state.current_vertex:
+			self.save_current_vertex()
 		self.state.current_vertex = next_vertex
 		self.time_passed += 1
 		self.act_sequence = self.act_sequence[1:]
+		if len(self.act_sequence) == 0:
+			self.save_current_vertex()
 
 	def __str__(self):
-		print("-------------------------")
-		print(type(self).__name__)
-		print("Score: " + str(self.score))
-		print("Number of expansions: " + str(self.num_of_expansions))
-		print("Number of movements" + str(self.num_of_movements))
-		print("Total time passed" + str(self.time_passed))
-		print("-------------------------")
+		agent_str = "-------------------------\n"
+		agent_str += type(self).__name__ + "\n"
+		agent_str += "Score: " + str(self.score) + "\n"
+		agent_str += "Number of expansions: " + str(self.num_of_expansions) + "\n"
+		agent_str += "Number of movements: " + str(self.num_of_movements) + "\n"
+		agent_str += "Total time passed: " + str(self.time_passed) + "\n"
+		agent_str += "-------------------------\n"
+		return agent_str
 
 
 class GreedyAgent(Agent):
