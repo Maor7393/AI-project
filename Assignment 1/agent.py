@@ -72,17 +72,20 @@ class Agent:
 		pass
 
 	def act_with_limit(self, world, limit):
+		print("------ " + type(self).__name__ + " ------")
 		if not self.terminated:
 			self.state.update_vertices_status(world)
 			if len(self.act_sequence) == 0:
 				expansions_in_search = self.search(world, limit)
-				print(type(self).__name__ + " Finished search, output sequence is: " + v.get_vertices_list_as_string(self.act_sequence))
+				print("Searched, output act sequence is: " + v.get_vertices_list_as_string(self.act_sequence))
 				self.time_passed += Limits.T * expansions_in_search
-
-			if not self.terminated and self.time_passed < Limits.TIME_LIMIT:
+			if not self.terminated and self.time_passed + 1 < Limits.TIME_LIMIT:
 				self.move()
 			else:
 				self.terminated = True
+				print("TERMINATED\n")
+		else:
+			print("TERMINATED\n")
 
 	def save_current_vertex(self):
 		print("Saving: " + str(self.state.current_vertex))
@@ -90,7 +93,7 @@ class Agent:
 		self.state.current_vertex.num_of_people = 0
 
 	def move(self):
-		print("------ " + type(self).__name__ + " ------")
+
 		print("Current sequence: " + v.get_vertices_list_as_string(self.act_sequence))
 		next_vertex = self.act_sequence[0]
 		print("Current Vertex: " + str(self.state.current_vertex))

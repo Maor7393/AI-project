@@ -15,9 +15,9 @@ def generate_time_limit(file_name):
 
 class Limits:
 	ASTAR_LIMIT = 10000
-	REALTIME_ASTAR_LIMIT = 10
+	REALTIME_ASTAR_LIMIT = 5
 	GREEDY_LIMIT = 1
-	T = 0.001
+	T = 0.01
 	TIME_LIMIT = generate_time_limit("graph.txt")
 
 
@@ -80,18 +80,18 @@ if __name__ == "__main__":
 	vertices_with_people = get_vertices_with_positive_num_of_people(world)
 	vertices_status = get_vertices_list_as_vertices_status_dict(vertices_with_people)
 	world = g.zip_graph(world, vertices_with_people)
-	print(world)
+	print("World at start: \n" + str(world) + "\n")
 	greedy = a.GreedyAgent(world.get_vertex("v1"), vertices_status, mst_heuristic)
 	astar = a.AStarAgent(world.get_vertex("v1"), vertices_status, mst_heuristic)
 	realtime_astar = a.RealTimeAStarAgent(world.get_vertex("v1"), vertices_status, mst_heuristic)
-	agent_list = [greedy, astar, realtime_astar]
+	agent_list = [greedy, astar]
+	# while not realtime_astar.terminated:
+	# 	realtime_astar.act(world)
 	i = 0
-	while not astar.terminated:
-		astar.act(world)
-	# while not a.all_agents_terminated(agent_list):
-	# 	agent_list[i].act(world)
-	# 	i += 1
-	# 	i = i % len(agent_list)
-
+	while not a.all_agents_terminated(agent_list):
+		agent_list[i].act(world)
+		i += 1
+		i = i % (len(agent_list))
+	print("\n\nWorld at the end: \n" + str(world))
 	for agent in agent_list:
 		print(agent)
