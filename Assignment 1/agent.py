@@ -7,8 +7,8 @@ from enviroment import Limits
 
 def generate_sequence(world: g.Graph, vertex_wrapper):
 	if vertex_wrapper.parent_wrapper is None:
-		return [vertex_wrapper.state.current_vertex]
-	edge_weight = world.get_edge_weight(vertex_wrapper.state.current_vertex, vertex_wrapper.parent_wrapper.state.current_vertex)
+		return []
+	edge_weight = world.get_edge_weight(vertex_wrapper.state.current_vertex,vertex_wrapper.parent_wrapper.state.current_vertex)
 	current_move = []
 	for i in range(edge_weight):
 		current_move.append(vertex_wrapper.state.current_vertex)
@@ -88,12 +88,13 @@ class Agent:
 			print("TERMINATED\n")
 
 	def save_current_vertex(self):
-		print("Saving: " + str(self.state.current_vertex))
-		self.score += self.state.current_vertex.num_of_people
-		self.state.current_vertex.num_of_people = 0
+		if self.state.current_vertex.num_of_people > 0:
+			print("Saving: " + str(self.state.current_vertex))
+			self.score += self.state.current_vertex.num_of_people
+			self.state.current_vertex.num_of_people = 0
 
 	def move(self):
-
+		self.num_of_movements += 1
 		print("Current sequence: " + v.get_vertices_list_as_string(self.act_sequence))
 		next_vertex = self.act_sequence[0]
 		print("Current Vertex: " + str(self.state.current_vertex))

@@ -50,11 +50,11 @@ def generate_graph(file_name):
 
 
 def get_vertices_with_positive_num_of_people(world_graph):
-	essential_vertices = []
+	list_of_positives = []
 	for vertex in world_graph.get_vertices():
 		if vertex.num_of_people > 0:
-			essential_vertices.append(vertex)
-	return essential_vertices
+			list_of_positives.append(vertex)
+	return list_of_positives
 
 
 def get_vertices_list_as_vertices_status_dict(vertices_list):
@@ -75,23 +75,22 @@ def mst_heuristic(vertex_wrapper):
 
 
 if __name__ == "__main__":
-
 	world = generate_graph("graph.txt")
-	vertices_with_people = get_vertices_with_positive_num_of_people(world)
-	vertices_status = get_vertices_list_as_vertices_status_dict(vertices_with_people)
-	world = g.zip_graph(world, vertices_with_people)
+	positive_vertices = get_vertices_with_positive_num_of_people(world)
+	vertices_status = get_vertices_list_as_vertices_status_dict(positive_vertices)
 	print("World at start: \n" + str(world) + "\n")
 	greedy = a.GreedyAgent(world.get_vertex("v1"), vertices_status, mst_heuristic)
 	astar = a.AStarAgent(world.get_vertex("v1"), vertices_status, mst_heuristic)
 	realtime_astar = a.RealTimeAStarAgent(world.get_vertex("v1"), vertices_status, mst_heuristic)
-	agent_list = [greedy, astar]
-	# while not realtime_astar.terminated:
-	# 	realtime_astar.act(world)
-	i = 0
-	while not a.all_agents_terminated(agent_list):
-		agent_list[i].act(world)
-		i += 1
-		i = i % (len(agent_list))
+	agent_list = [greedy, astar, realtime_astar]
+	while not astar.terminated:
+		astar.act(world)
+
+	# i = 0
+	# while not a.all_agents_terminated(agent_list):
+	# 	agent_list[i].act(world)
+	# 	i += 1
+	# 	i = i % (len(agent_list))
 	print("\n\nWorld at the end: \n" + str(world))
 	for agent in agent_list:
 		print(agent)
