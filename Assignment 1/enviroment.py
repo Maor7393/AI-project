@@ -68,7 +68,8 @@ def mst_heuristic(vertex_wrapper):
 	global world
 	unsaved_vertices = vertex_wrapper.state.get_unsaved_vertices()
 	essential_vertices = unsaved_vertices
-	essential_vertices.append(vertex_wrapper.state.current_vertex)
+	if vertex_wrapper.state.current_vertex not in essential_vertices:
+		essential_vertices.append(vertex_wrapper.state.current_vertex)
 	zipped_graph = g.zip_graph(world, essential_vertices)
 	mst_zipped = zipped_graph.MST()
 	return mst_zipped.get_sum_weights()

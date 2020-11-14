@@ -1,7 +1,7 @@
 D 20
-V v1 3
-V v2 3
-V v3 3
+V v1 0
+V v2 0
+V v3 0
 V v4 3
 V v5 3
 V v6 3
@@ -16,6 +16,3 @@ E v1 v3 1
 E v1 v4 1
 E v1 v5 1
 E v1 v6 1
-
-
-

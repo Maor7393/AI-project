@@ -76,6 +76,29 @@ class Graph(object):
             self.graph_dict[vertex1].append((vertex2, weight))
             self.graph_dict[vertex2].append((vertex1, weight))
 
+    def add_or_replace_edge(self,vertex1, vertex2, weight):
+        if vertex2 not in self.expand_just_vertices(vertex1) and vertex1 not in self.expand_just_vertices(vertex2):
+            self.graph_dict[vertex1].append((vertex2, weight))
+            self.graph_dict[vertex2].append((vertex1, weight))
+        elif weight < self.get_edge_weight(vertex1, vertex2):
+            self.replace_edge(vertex1, vertex2, weight)
+
+    def replace_edge(self, vertex1, vertex2, weight):
+        index_of_vertex2_in_vertex_1 = 0
+        index_of_vertex1_in_vertex_2 = 0
+        for neighbor_tup in self.expand(vertex1):
+            if neighbor_tup[0] == vertex2:
+                break
+            index_of_vertex2_in_vertex_1 += 1
+        for neighbor_tup in self.expand(vertex2):
+            if neighbor_tup[0] == vertex1:
+                break
+            index_of_vertex1_in_vertex_2 += 1
+        del self.graph_dict[vertex1][index_of_vertex2_in_vertex_1]
+        del self.graph_dict[vertex2][index_of_vertex1_in_vertex_2]
+        self.graph_dict[vertex1].append((vertex2, weight))
+        self.graph_dict[vertex2].append((vertex1, weight))
+
     def generate_edges(self):
         edges = []
         for vertex in self.graph_dict:
@@ -129,9 +152,9 @@ class Graph(object):
         neighbor_tuples = self.expand(vertex)
         for neighbor_tuple in neighbor_tuples:
             for other_neighbor_tuple in neighbor_tuples:
-                if not neighbor_tuple == other_neighbor_tuple:
+                if not (neighbor_tuple == other_neighbor_tuple):
                     both_edges_weight = neighbor_tuple[1] + other_neighbor_tuple[1]
-                    self.add_edge(neighbor_tuple[0], other_neighbor_tuple[0], both_edges_weight)
+                    self.add_or_replace_edge(neighbor_tuple[0], other_neighbor_tuple[0], both_edges_weight)
 
     def get_lowest_cost_edge_between_sets(self, in_set, out_set):
         min_edge = None

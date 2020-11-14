@@ -1,6 +1,7 @@
 import vertex as v
 import graph as g
 import state as s
+import copy as c
 import priority_queue as pq
 from enviroment import Limits
 
@@ -48,7 +49,8 @@ class Agent:
 
 	def search_with_limit(self, world, fringe, limit):
 		counter = 0
-		fringe.insert(v.VertexWrapper(self.state, None, 0))
+		vertex_wrapper_of_self_state = v.VertexWrapper(c.copy(self.state), None, 0)
+		fringe.insert(vertex_wrapper_of_self_state)
 		while not fringe.is_empty():
 			current_vertex_wrapper = fringe.pop()
 			current_vertex = current_vertex_wrapper.state.current_vertex
@@ -59,10 +61,9 @@ class Agent:
 				break
 			counter += 1
 			for neighbor_tup in world.expand(current_vertex):
-				neighbor_state = s.State(neighbor_tup[0], current_vertex_wrapper.state.vertices_status)
+				neighbor_state = s.State(neighbor_tup[0], c.copy(current_vertex_wrapper.state.vertices_status))
 				neighbor_vertex_wrapper = v.VertexWrapper(neighbor_state, current_vertex_wrapper, acc_weight + neighbor_tup[1])
 				fringe.insert(neighbor_vertex_wrapper)
-
 		self.num_of_expansions += counter
 		if fringe.is_empty():
 			self.terminated = True
