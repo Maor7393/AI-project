@@ -6,4 +6,4 @@ Introduction to Artificial Intelligence is an elective/advanced course for bache
 
 
 ## Assignments
-#### [Assignment 1: Environment simulator and agents for the Hurricane Evacuation Problem](https://www.cs.bgu.ac.il/~shimony/AI2021/AIass1.html)
+#### [Assignment 1: Search Agents - Environment simulator and agents for the Hurricane Evacuation Problem](https://www.cs.bgu.ac.il/~shimony/AI2021/AIass1.html)
