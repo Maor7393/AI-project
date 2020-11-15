@@ -68,15 +68,39 @@ def mst_heuristic(vertex_wrapper):
 	return mst_zipped.get_sum_weights()
 
 
+def create_vertices_list_size(n):
+	v_list = []
+	for i in range(n):
+		v = 'v' + str(i + 1)
+		v_list.append(v)
+	return v_list
+
+
+def create_clique_graph_file_size(n):
+	v_list = create_vertices_list_size(n)
+	with open('graph.txt', 'w+') as file:
+		for vertex_name in v_list:
+			str_to_write = 'V ' + vertex_name + ' ' + '3' + '\n'
+			file.write(str_to_write)
+		for vertex_name in v_list:
+			for other_vertex_name in v_list:
+				if vertex_name != other_vertex_name:
+					if abs(int(vertex_name[1:]) - int(other_vertex_name[1:])) == 1 or ((vertex_name[1:] == "1" and other_vertex_name[1:] == str(n)) or (vertex_name[1:] == str(n) and other_vertex_name[1:] == "1")):
+						file.write('E ' + vertex_name + ' ' + other_vertex_name + ' 6' + '\n')
+					else:
+						file.write('E ' + vertex_name + ' ' + other_vertex_name + ' 1' + '\n')
+
+
 if __name__ == "__main__":
+	# create_clique_graph_file_size(15)
 	world = generate_graph("graph.txt")
 	positive_vertices = get_vertices_with_positive_num_of_people(world)
 	vertices_status = get_vertices_list_as_vertices_status_dict(positive_vertices)
 	print("World at start: \n" + str(world) + "\n")
-	greedy = a.GreedyAgent(world.get_vertex("v1"), vertices_status, mst_heuristic)
-	astar = a.AStarAgent(world.get_vertex("v1"), vertices_status, mst_heuristic)
-	realtime_astar = a.RealTimeAStarAgent(world.get_vertex("v1"), vertices_status, mst_heuristic)
-	saboteur = Saboteur(world.get_vertex("v1"))
+	greedy = a.GreedyAgent(world.get_vertex("v0"), vertices_status, mst_heuristic)
+	astar = a.AStarAgent(world.get_vertex("v0"), vertices_status, mst_heuristic)
+	realtime_astar = a.RealTimeAStarAgent(world.get_vertex("v0"), vertices_status, mst_heuristic)
+	saboteur = Saboteur(world.get_vertex("v0"))
 	agent_list = [greedy, astar, realtime_astar]
 	while not astar.terminated:
 		astar.act(world)
