@@ -65,8 +65,6 @@ class Agent:
 				neighbor_vertex_wrapper = v.VertexWrapper(neighbor_state, current_vertex_wrapper, acc_weight + neighbor_tup[1])
 				fringe.insert(neighbor_vertex_wrapper)
 		self.num_of_expansions += counter
-		if fringe.is_empty():
-			self.terminated = True
 		return counter
 
 	def search(self, world, limit):
