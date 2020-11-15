@@ -54,7 +54,7 @@ class Graph(object):
     def vertex_exists(self, vertex):
         return vertex.name in self.vertices_names()
 
-    def edge_exists(self,vertex1,vertex2):
+    def edge_exists(self, vertex1, vertex2):
         neighbor_list = self.expand(vertex1)
         for neighbor_tup in neighbor_list:
             if vertex2 == neighbor_tup[0]:
@@ -76,14 +76,7 @@ class Graph(object):
             self.graph_dict[vertex1].append((vertex2, weight))
             self.graph_dict[vertex2].append((vertex1, weight))
 
-    def add_or_replace_edge(self,vertex1, vertex2, weight):
-        if vertex2 not in self.expand_just_vertices(vertex1) and vertex1 not in self.expand_just_vertices(vertex2):
-            self.graph_dict[vertex1].append((vertex2, weight))
-            self.graph_dict[vertex2].append((vertex1, weight))
-        elif weight < self.get_edge_weight(vertex1, vertex2):
-            self.replace_edge(vertex1, vertex2, weight)
-
-    def replace_edge(self, vertex1, vertex2, weight):
+    def delete_edge(self, vertex1, vertex2):
         index_of_vertex2_in_vertex_1 = 0
         index_of_vertex1_in_vertex_2 = 0
         for neighbor_tup in self.expand(vertex1):
@@ -96,6 +89,16 @@ class Graph(object):
             index_of_vertex1_in_vertex_2 += 1
         del self.graph_dict[vertex1][index_of_vertex2_in_vertex_1]
         del self.graph_dict[vertex2][index_of_vertex1_in_vertex_2]
+
+    def add_or_replace_edge(self,vertex1, vertex2, weight):
+        if vertex2 not in self.expand_just_vertices(vertex1) and vertex1 not in self.expand_just_vertices(vertex2):
+            self.graph_dict[vertex1].append((vertex2, weight))
+            self.graph_dict[vertex2].append((vertex1, weight))
+        elif weight < self.get_edge_weight(vertex1, vertex2):
+            self.replace_edge(vertex1, vertex2, weight)
+
+    def replace_edge(self, vertex1, vertex2, weight):
+        self.delete_edge(vertex1,vertex2)
         self.graph_dict[vertex1].append((vertex2, weight))
         self.graph_dict[vertex2].append((vertex1, weight))
 
