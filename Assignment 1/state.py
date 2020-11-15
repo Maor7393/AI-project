@@ -9,6 +9,12 @@ class State:
 		self.current_vertex = current_vertex
 		self.vertices_status = cp.copy(vertices_status)
 
+	def __str__(self):
+		s = "Current vertex: " + str(self.current_vertex) + "\n{"
+		for vertex in self.vertices_status:
+			s += vertex.name + ": " + str(self.vertices_status[vertex])+"\n"
+		return s+"}"
+
 	def save_current_vertex(self):
 		self.vertices_status[self.current_vertex] = True
 
