@@ -4,17 +4,14 @@ V v3 3
 V v4 3
 V v5 3
 
-
+E v1 v2 6
 E v2 v3 6
 E v3 v4 6
 E v4 v5 6
-E v1 v2 1
+E v1 v5 6
+
 E v1 v3 1
 E v1 v4 1
-E v1 v5 1
-
-
-
-
-
-
+E v2 v4 1
+E v2 v5 1
+E v3 v5 1

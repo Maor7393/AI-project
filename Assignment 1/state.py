@@ -32,3 +32,8 @@ class State:
 				self.vertices_status[vertex] = False
 			else:
 				self.vertices_status[vertex] = True
+
+	def does_current_vertex_need_saving(self):
+		if not self.vertices_status[self.current_vertex]:
+			return True
+		return False
