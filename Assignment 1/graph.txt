@@ -1,47 +1,17 @@
-D 40
 V v1 3
 V v2 3
 V v3 3
 V v4 3
 V v5 3
-V v6 3
-V v7 3
-V v8 3
-V v9 3
-V v10 3
-V v11 3
-V v12 3
-V v13 3
-V v14 3
-V v15 3
 
 
 E v2 v3 6
 E v3 v4 6
 E v4 v5 6
-E v5 v6 6
-E v6 v7 6
-E v8 v9 6
-E v10 v11 6
-E v11 v12 6
-E v12 v13 6
-E v13 v14 6
-E v14 v15 6
-
 E v1 v2 1
 E v1 v3 1
 E v1 v4 1
 E v1 v5 1
-E v1 v6 1
-E v1 v7 1
-E v1 v8 1
-E v1 v9 1
-E v1 v10 1
-E v1 v11 1
-E v1 v12 1
-E v1 v13 1
-E v1 v14 1
-E v1 v15 1
 
 
 

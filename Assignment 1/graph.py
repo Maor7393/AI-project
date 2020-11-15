@@ -90,7 +90,7 @@ class Graph(object):
         del self.graph_dict[vertex1][index_of_vertex2_in_vertex_1]
         del self.graph_dict[vertex2][index_of_vertex1_in_vertex_2]
 
-    def add_or_replace_edge(self,vertex1, vertex2, weight):
+    def add_or_replace_edge(self, vertex1, vertex2, weight):
         if vertex2 not in self.expand_just_vertices(vertex1) and vertex1 not in self.expand_just_vertices(vertex2):
             self.graph_dict[vertex1].append((vertex2, weight))
             self.graph_dict[vertex2].append((vertex1, weight))
@@ -98,7 +98,7 @@ class Graph(object):
             self.replace_edge(vertex1, vertex2, weight)
 
     def replace_edge(self, vertex1, vertex2, weight):
-        self.delete_edge(vertex1,vertex2)
+        self.delete_edge(vertex1, vertex2)
         self.graph_dict[vertex1].append((vertex2, weight))
         self.graph_dict[vertex2].append((vertex1, weight))
 

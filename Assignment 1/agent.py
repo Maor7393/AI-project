@@ -3,7 +3,7 @@ import graph as g
 import state as s
 import copy as c
 import priority_queue as pq
-from enviroment import Limits
+import program_variables
 
 
 def generate_sequence(world: g.Graph, vertex_wrapper):
@@ -79,8 +79,8 @@ class Agent:
 			if len(self.act_sequence) == 0:
 				expansions_in_search = self.search(world, limit)
 				print("Searched, output act sequence is: " + v.get_vertices_list_as_string(self.act_sequence))
-				self.time_passed += Limits.T * expansions_in_search
-			if not self.terminated and self.time_passed + 1 < Limits.TIME_LIMIT:
+				self.time_passed += program_variables.T * expansions_in_search
+			if not self.terminated and self.time_passed + 1 < program_variables.TIME_LIMIT:
 				self.move()
 			else:
 				self.terminated = True
@@ -129,7 +129,7 @@ class GreedyAgent(Agent):
 		return self.search_with_limit(world, fringe, limit)
 
 	def act(self, world):
-		return self.act_with_limit(world, Limits.GREEDY_LIMIT)
+		return self.act_with_limit(world, program_variables.GREEDY_LIMIT)
 
 
 class AStarAgent(Agent):
@@ -142,7 +142,7 @@ class AStarAgent(Agent):
 		return self.search_with_limit(world, fringe, limit)
 
 	def act(self, world):
-		return self.act_with_limit(world, Limits.ASTAR_LIMIT)
+		return self.act_with_limit(world, program_variables.ASTAR_LIMIT)
 
 
 class RealTimeAStarAgent(Agent):
@@ -155,4 +155,4 @@ class RealTimeAStarAgent(Agent):
 		return self.search_with_limit(world, fringe, limit)
 
 	def act(self, world):
-		return self.act_with_limit(world, Limits.REALTIME_ASTAR_LIMIT)
+		return self.act_with_limit(world, program_variables.REALTIME_ASTAR_LIMIT)
