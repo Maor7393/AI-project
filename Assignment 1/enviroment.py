@@ -102,14 +102,11 @@ if __name__ == "__main__":
 	realtime_astar = a.RealTimeAStarAgent(world.get_vertex("v1"), vertices_status, mst_heuristic)
 	agent_list = [greedy, astar, realtime_astar]
 
-	while not astar.terminated:
-		astar.act(world)
-
-	# i = 0
-	# while not a.all_agents_terminated(agent_list):
-	# 	agent_list[i].act(world)
-	# 	i += 1
-	# 	i = i % (len(agent_list))
+	i = 0
+	while not a.all_agents_terminated(agent_list):
+		agent_list[i].act(world)
+		i += 1
+		i = i % (len(agent_list))
 
 	print("\n\nWorld at the end: \n" + str(world))
 	for agent in agent_list:
