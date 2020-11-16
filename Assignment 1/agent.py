@@ -65,6 +65,9 @@ class Agent:
 				neighbor_vertex_wrapper = v.VertexWrapper(neighbor_state, current_vertex_wrapper, acc_weight + neighbor_tup[1])
 				fringe.insert(neighbor_vertex_wrapper)
 		self.num_of_expansions += counter
+		# if fringe.is_empty():
+		# 	print("here")
+		# 	self.terminated = True
 		return counter
 
 	def search(self, world, limit):
@@ -76,6 +79,7 @@ class Agent:
 			self.state.update_vertices_status(world)
 			if len(self.act_sequence) == 0:
 				expansions_in_search = self.search(world, limit)
+				self.terminated = len(self.act_sequence) == 0
 				print("Searched, output act sequence is: " + v.get_vertices_list_as_string(self.act_sequence))
 				self.time_passed += program_variables.T * expansions_in_search
 			if not self.terminated and self.time_passed + 1 < program_variables.TIME_LIMIT:

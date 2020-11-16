@@ -102,8 +102,8 @@ if __name__ == "__main__":
 	realtime_astar = a.RealTimeAStarAgent(world.get_vertex("v0"), vertices_status, mst_heuristic)
 	saboteur = Saboteur(world.get_vertex("v0"))
 	agent_list = [greedy, astar, realtime_astar]
-	while not greedy.terminated:
-		greedy.act(world)
+	while not astar.terminated:
+		astar.act(world)
 
 	# i = 0
 	# while not a.all_agents_terminated(agent_list):
