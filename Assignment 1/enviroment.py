@@ -92,16 +92,16 @@ def create_clique_graph_file_size(n):
 
 
 if __name__ == "__main__":
-	# create_clique_graph_file_size(15)
+	create_clique_graph_file_size(15)
 	world = generate_graph("graph.txt")
 	positive_vertices = get_vertices_with_positive_num_of_people(world)
 	vertices_status = get_vertices_list_as_vertices_status_dict(positive_vertices)
 	print("World at start: \n" + str(world) + "\n")
-	greedy = a.GreedyAgent(world.get_vertex("v0"), vertices_status, mst_heuristic)
-	astar = a.AStarAgent(world.get_vertex("v0"), vertices_status, mst_heuristic)
-	realtime_astar = a.RealTimeAStarAgent(world.get_vertex("v0"), vertices_status, mst_heuristic)
-	saboteur = Saboteur(world.get_vertex("v0"))
+	greedy = a.GreedyAgent(world.get_vertex("v1"), vertices_status, mst_heuristic)
+	astar = a.AStarAgent(world.get_vertex("v1"), vertices_status, mst_heuristic)
+	realtime_astar = a.RealTimeAStarAgent(world.get_vertex("v1"), vertices_status, mst_heuristic)
 	agent_list = [greedy, astar, realtime_astar]
+
 	while not astar.terminated:
 		astar.act(world)
 

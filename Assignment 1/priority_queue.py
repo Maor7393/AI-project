@@ -9,14 +9,11 @@ class PriorityQueue(object):
     def __str__(self):
         return ' '.join([str(i) for i in self.queue])
 
-    # for checking if the queue is empty
     def is_empty(self):
         return len(self.queue) == 0
 
-    # for inserting an element in the queue
     def insert(self, data):
         self.queue.append(data)
-# for popping an element based on Priority
 
     def pop(self):
         heuristic_values = dict()
