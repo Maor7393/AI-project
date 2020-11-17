@@ -1,34 +1,18 @@
-V v0 1
-V v1 1
+V v1 0
 V v2 1
-V v3 1
-V v4 0
-V v5 1
-V v6 1
-V v7 0
-V v8 0
-V v9 0
-V v10 0
-V v11 0
-
-E v0 v1 40
-E v0 v2 20
-E v0 v3 15
-E v0 v5 20
-E v0 v6 50
-E v0 v8 15
-E v0 v11 1
-E v3 v4 45
-E v1 v4 3
-E v1 v3 10
-E v3 v5 5
-E v6 v7 10
-E v7 v10 1
-E v8 v9 10
-E v9 v10 10
+V v3 2
+V v4 4
+V v5 5
+V v6 0
+V v7 6
 
 
-
-
-
-
+E v4 v5 4
+E v1 v7 5
+E v1 v3 2
+E v1 v2 3
+E v3 v2 4
+E v3 v6 1
+E v1 v6 1
+E v3 v4 7
+E v7 v4 10
