@@ -155,17 +155,11 @@ if __name__ == "__main__":
         new_agent = create_agent(agent_type, starting_vertex, world)
         agent_list.append(new_agent)
     program_deadline = query_number_from_user('Enter program time limit: ', 10001)
-    astar_limit = query_number_from_user('Enter real-time a* limit: ', 10001)
-    program_variables.ASTAR_LIMIT = astar_limit
     program_variables.TIME_LIMIT = program_deadline
 
     print('world: ')
     print(world)
     input('Press Enter to start..')
-
-    print('hashed yodea ma')
-    print('hashed yodea ma')
-    print('hashed yodea ma')
 
     i = 0
     while not a.all_agents_terminated(agent_list):
@@ -175,6 +169,8 @@ if __name__ == "__main__":
     for agent in agent_list:
         print(agent)
 
+    print("World at End: ")
+    print(world)
 # create_clique_graph_file_size(15)
 #
 # positive_vertices = get_vertices_with_positive_num_of_people(world)
