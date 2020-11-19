@@ -1,0 +1,8 @@
+state:
+    successor():
+        if not in edge:
+            self.expand(current_vertex)
+        else:
+            return new state with in_edge_progress - 1
+
+
