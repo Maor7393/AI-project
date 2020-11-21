@@ -2,8 +2,10 @@ import vertex as v
 import graph as g
 import copy as c
 import priority_queue as pq
-import program_variables
+from program_variables import WORLD
 import state as s
+import sys
+
 
 
 def all_agents_terminated(agent_list):
@@ -14,22 +16,22 @@ def all_agents_terminated(agent_list):
 			break
 	return all_terminated
 
+class Agent:
 
-class Agent: # [V2, 0, V3]
-
-	def __init__(self, max_starting_vertex, min_starting_vertex, vertices_status):
-		self.state = s.State(s.Location(max_starting_vertex, 0, max_starting_vertex), s.Location(min_starting_vertex, 0, min_starting_vertex), vertices_status, vertices_status)
+	def __init__(self, max_starting_vertex, min_starting_vertex, vertices_status, comparator):
+		self.state = s.State(s.Location(max_starting_vertex, 0, max_starting_vertex), s.Location(min_starting_vertex, 0, min_starting_vertex), vertices_status, vertices_status, 0, 0, 0, 0)
 		self.my_score = 0
 		self.terminated = False
 		self.act_sequence = []
 		self.num_of_movements = 0
+		self.better_than = comparator
 
 	def act_with_limit(self, world, limit):
 		print("------ " + type(self).__name__ + " ------")
 		if not self.terminated:
 			self.state.update_vertices_status(world)
 			if len(self.act_sequence) == 0:
-				pass
+
 			if not self.terminated and self.time_passed + 1 < program_variables.TIME_LIMIT:
 				self.move()
 			else:
@@ -37,6 +39,7 @@ class Agent: # [V2, 0, V3]
 				print("TERMINATED\n")
 		else:
 			print("TERMINATED\n")
+
 
 	def save_current_vertex(self):
 		if self.state.current_vertex.num_of_people > 0:
@@ -68,10 +71,44 @@ class Agent: # [V2, 0, V3]
 		agent_str += "-------------------------\n"
 		return agent_str
 
+class MaxAgent(Agent):
+	def __init_(self,max_starting_vertex, min_starting_vertex, vertices_status, comparator):
+		super().__init__(max_starting_vertex, min_starting_vertex, vertices_status, comparator)
 
+	def minimax(self,state : s.State):
+		current_vertex = self.state.max_agent_current_location.successor
+		action_sequence = []
+		best_value =  None
+		best_edge = None
+		for neighbor_tup in WORLD.expand(current_vertex):
+			checked_location = s.Location(current_vertex,neighbor_tup[1] - 1,neighbor_tup[0])
+			new_state = state.get_new_state()
+			new_state.max_agent_current_location = checked_location
+			value_of_new_state = self.min_value(new_state)
+			if not self.better_than(best_value,value_of_new_state):
+				best_value = value_of_new_state
+				best_edge = neighbor_tup
+		for i in range(best_edge[1]):
+			action_sequence.append(best_edge[0])
+		return action_sequence
 
+	def max_value(self,state):
+		if state.terminal_state():
+			return state.evaluate()
+		best_value = None
+		for next_state in state.successor("MAX"):
+			next_state_min_value =  self.min_value(next_state)
+			if not self.better_than(best_value,next_state_min_value):
+				best_value = next_state_min_value
+		return best_value
 
-
-
-
+	def min_value(self,state : s.State):
+		if state.terminal_state():
+			return state.evaluate()
+		best_value = None
+		for next_state in state.successor("MIN"):
+			next_state_max_value = self.max_value(next_state)
+			if self.better_than(best_value,next_state_max_value):
+				best_value = next_state_max_value
+		return best_value
 

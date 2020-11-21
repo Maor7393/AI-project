@@ -1,8 +1,23 @@
-state:
-    successor():
-        if not in edge:
-            self.expand(current_vertex)
+maxagant:
+
+    minimax(state)
+            return max(min-value(state)[0] - min-value(state)[1]))
+
+    min-value(state):
+        if state.terminal or cutoff:
+            evaluate(state)
         else:
-            return new state with in_edge_progress - 1
+        v <- -infinity
+            for each next_state in successor(state,"MAX"):
+                v = min(v,max-value(next_state)
+
+    max-value(state):
+         if state.terminal or cutoff:
+            evaluate(state)
+        else:
+        v <- infinity
+            for each next_state in successor(state,"MIN"):
+                v = min(min-value(next_state)
+
 
 
