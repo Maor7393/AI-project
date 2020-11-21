@@ -11,9 +11,16 @@ def amount_to_save(vertices_status):
 	return counter
 
 
+class Location(object):
+	def __init__(self, prev: v.Vertex, edge_progress: int, successor: v.Vertex):
+		self.prev = prev
+		self.edge_progress = edge_progress
+		self.successor = successor
+
+
 class State:
 
-	def __init__(self, max_agent_current_location, min_agent_current_location, max_vertices_status: dict, min_vertices_status: dict, max_agent_score: int, min_agent_score: int, max_acc_weight: int, min_acc_weight: int):
+	def __init__(self, max_agent_current_location: Location, min_agent_current_location: Location, max_vertices_status: dict, min_vertices_status: dict, max_agent_score: int, min_agent_score: int, max_acc_weight: int, min_acc_weight: int):
 		self.max_agent_current_location = max_agent_current_location
 		self.min_agent_current_location = min_agent_current_location
 		self.max_vertices_status = cp.copy(max_vertices_status)
@@ -30,6 +37,7 @@ class State:
 			if not self.vertices_status[vertex]:
 				unsaved.append(vertex)
 		return unsaved
+
 
 	def terminal_state(self):
 		return amount_to_save(self.max_vertices_status) == 0 or amount_to_save(self.min_vertices_status) == 0 or self.min_acc_weight + self.max_acc_weight >= TIME_LIMIT
@@ -56,3 +64,5 @@ class State:
 		if not self.vertices_status[self.current_vertex]:
 			return True
 		return False
+
+
