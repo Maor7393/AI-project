@@ -9,7 +9,7 @@ def g(vertex_wrapper: v.VertexWrapper):
 	return vertex_wrapper.acc_weight
 
 
-def goal_test(state):
+def terminal_state(state):
 	return state.amount_to_save() == 0
 
 
@@ -77,8 +77,5 @@ class Agent:
 		return agent_str
 
 
-class MaxAgent(Agent):
-	def __init__(self):
-		pass
 
 
