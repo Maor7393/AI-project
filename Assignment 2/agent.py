@@ -3,14 +3,7 @@ import graph as g
 import copy as c
 import priority_queue as pq
 import program_variables
-
-
-def g(vertex_wrapper: v.VertexWrapper):
-	return vertex_wrapper.acc_weight
-
-
-def terminal_state(state):
-	return state.amount_to_save() == 0
+import state as s
 
 
 def all_agents_terminated(agent_list):
@@ -22,11 +15,10 @@ def all_agents_terminated(agent_list):
 	return all_terminated
 
 
-class Agent:
+class Agent: # [V2, 0, V3]
 
-	def __init__(self, max_starting_vertex, min_starting_vertex, vertices_status, h):
-		self.state = s.State([max_starting_vertex], [min_starting_vertex], vertices_status, 0, 0)
-		self.h = h
+	def __init__(self, max_starting_vertex, min_starting_vertex, vertices_status):
+		self.state = s.State(s.Location(max_starting_vertex, 0, max_starting_vertex), s.Location(min_starting_vertex, 0, min_starting_vertex), vertices_status, vertices_status)
 		self.my_score = 0
 		self.terminated = False
 		self.act_sequence = []
@@ -75,6 +67,10 @@ class Agent:
 		agent_str += "Total time passed: " + str(self.time_passed) + "\n"
 		agent_str += "-------------------------\n"
 		return agent_str
+
+
+
+
 
 
 
