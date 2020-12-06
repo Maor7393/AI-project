@@ -4,7 +4,7 @@ V v3 4
 V v4 0
 
 E v1 v2 2
-E v2 v4 3
-E v2 v3 4
+E v1 v3 5
+E v2 v4 4
+E v2 v3 3
 E v3 v4 6
-E v1 v4 5

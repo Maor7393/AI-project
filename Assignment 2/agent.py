@@ -1,6 +1,7 @@
-from program_variables import WORLD
 from program_variables import TIME_LIMIT
 import state as s
+from graph import Graph
+from vertex import all_vertex_saved
 
 
 def all_agents_terminated(agent_list):
@@ -15,16 +16,17 @@ def all_agents_terminated(agent_list):
 class Agent:
 	num_of_real_movements = 0
 
-	def __init__(self, max_starting_vertex, min_starting_vertex, vertices_status, other_agent, comparator):
+	def __init__(self, max_starting_vertex, min_starting_vertex, vertices_status, act_sequence, other_agent, comparator):
 		self.state = s.State(s.Location(max_starting_vertex, 0, max_starting_vertex), s.Location(min_starting_vertex, 0, min_starting_vertex), vertices_status, 0, 0, 0)
 		self.comparator = comparator
 		self.other_agent = other_agent
 		self.terminated = False
-		self.act_sequence = []
+		self.act_sequence = act_sequence
 		self.real_score = 0
 
-	def act(self):
+	def act(self, WORLD:Graph):
 		print("------ " + type(self).__name__ + " ------")
+		self.terminated = all_vertex_saved(WORLD.get_vertices())
 		if not self.terminated:
 			if self.act_sequence[1] > 0 and Agent.num_of_real_movements < TIME_LIMIT:
 				self.move_with_update_location()
@@ -33,19 +35,12 @@ class Agent:
 				print("TERMINATED\n")
 			elif self.act_sequence[1] == 0:
 				self.save_current_vertex()
-				self.update_state()
-				self.act_sequence = self.minimax(self.state)
+				self.update_state(WORLD)
+				print("MINIMAXING")
+				self.act_sequence = self.minimax(self.state, WORLD)
+				self.set_new_location(self.act_sequence)
 		else:
 			print("TERMINATED\n")
-
-	def minimax(self, state: s.State):
-		pass
-
-	def update_state(self):
-		pass
-
-	def move_with_update_location(self):
-		pass
 
 	def save_current_vertex(self):
 		current_vertex = self.act_sequence[2]
@@ -69,45 +64,62 @@ class Agent:
 		agent_str += "-------------------------\n"
 		return agent_str
 
-	def max_value(self, state, num_of_plys):
+	def max_value(self, state, num_of_plys, WORLD:Graph):
 		if state.terminal_state(num_of_plys):
 			return state.evaluate()
 		best_value = None
-		for next_state in state.successor("MAX"):
-			next_state_min_value = self.min_value(next_state, num_of_plys + 1)
+		for next_state in state.successor("MAX", WORLD):
+			next_state_min_value = self.min_value(next_state, num_of_plys + 1, WORLD)
+			if best_value is None:
+				best_value = next_state_min_value
 			if not self.comparator(best_value, next_state_min_value):
 				best_value = next_state_min_value
 		return best_value
 
-	def min_value(self, state: s.State, num_of_plys):
+	def min_value(self, state: s.State, num_of_plys, WORLD:Graph):
 		if state.terminal_state(num_of_plys):
 			return state.evaluate()
 		best_value = None
-		for next_state in state.successor("MIN"):
-			next_state_max_value = self.max_value(next_state, num_of_plys + 1)
+		for next_state in state.successor("MIN", WORLD):
+			next_state_max_value = self.max_value(next_state, num_of_plys + 1,WORLD)
+			if best_value is None:
+				best_value = next_state_max_value
 			if self.comparator(best_value, next_state_max_value):
 				best_value = next_state_max_value
 		return best_value
 
+	def set_new_location(self, location_params):
+		pass
+
+	def minimax(self, state: s.State, WORLD:Graph):
+		return []
+
+	def update_state(self, WORLD:Graph):
+		pass
+
+	def move_with_update_location(self):
+		pass
 
 class MaxAgent(Agent):
 
-	def __init_(self, max_starting_vertex, min_starting_vertex, vertices_status, min_agent, comparator):
-		self.act_sequence = [max_starting_vertex, 0, max_starting_vertex]
-		super().__init__(max_starting_vertex, min_starting_vertex, vertices_status, min_agent, comparator)
+	def __init_(self, max_starting_vertex, min_starting_vertex, vertices_status, act_sequence, min_agent, comparator):
+		super().__init__(max_starting_vertex, min_starting_vertex, vertices_status, act_sequence, min_agent, comparator)
 
 	def move_with_update_location(self):
 		self.move_in_edge()
 		self.state.max_agent_current_location.edge_progress -= 1
 
-	def update_state(self):
+	def set_new_location(self,location_params):
+		self.state.max_agent_current_location.set_location_parameters(location_params[0],location_params[1],location_params[2])
+
+	def update_state(self, WORLD):
 		self.state.min_agent_current_location = self.other_agent.state.min_agent_current_location
 		self.state.update_vertices_status(WORLD)
 		self.state.max_agent_score = self.real_score
 		self.state.min_agent_score = self.other_agent.real_score
 		self.state.total_simulated_movements = Agent.num_of_real_movements
 
-	def minimax(self, state: s.State):
+	def minimax(self, state: s.State,WORLD:Graph):
 		current_vertex = self.act_sequence[2]
 		best_value = None
 		best_edge = None
@@ -116,7 +128,7 @@ class MaxAgent(Agent):
 			checked_location = s.Location(current_vertex, neighbor_tup[1] - 1, neighbor_tup[0])
 			new_state = state.get_new_state()
 			new_state.max_agent_current_location = checked_location
-			value_of_new_state = self.min_value(new_state, num_of_plys + 1)
+			value_of_new_state = self.min_value(new_state, num_of_plys + 1, WORLD)
 			if best_value is None:
 				best_value = value_of_new_state
 				best_edge = neighbor_tup
@@ -128,22 +140,24 @@ class MaxAgent(Agent):
 
 class MinAgent(Agent):
 
-	def __init_(self, max_starting_vertex, min_starting_vertex, vertices_status, min_agent, comparator):
-		self.act_sequence = [min_starting_vertex, 0, min_starting_vertex]
-		super().__init__(max_starting_vertex, min_starting_vertex, vertices_status, min_agent, comparator)
+	def __init_(self, max_starting_vertex, min_starting_vertex, vertices_status, act_sequence, min_agent, comparator):
+		super().__init__(max_starting_vertex, min_starting_vertex, vertices_status, act_sequence, min_agent, comparator)
 
 	def move_with_update_location(self):
 		self.move_in_edge()
 		self.state.min_agent_current_location.edge_progress -= 1
 
-	def update_state(self):
+	def set_new_location(self, location_params):
+		self.state.min_agent_current_location.set_location_parameters(location_params[0],location_params[1],location_params[2])
+
+	def update_state(self,WORLD):
 		self.state.max_agent_current_location = self.other_agent.state.max_agent_current_location
 		self.state.update_vertices_status(WORLD)
 		self.state.total_simulated_movements = Agent.num_of_real_movements
 		self.state.max_agent_score = self.other_agent.real_score
 		self.state.min_agent_score = self.real_score
 
-	def minimax(self, state: s.State):
+	def minimax(self, state: s.State, WORLD:Graph):
 		current_vertex = self.act_sequence[2]
 		best_value = None
 		best_edge = None
@@ -152,7 +166,10 @@ class MinAgent(Agent):
 			checked_location = s.Location(current_vertex, neighbor_tup[1] - 1, neighbor_tup[0])
 			new_state = state.get_new_state()
 			new_state.max_agent_current_location = checked_location
-			value_of_new_state = self.max_value(new_state, num_of_plys + 1)
+			value_of_new_state = self.max_value(new_state, num_of_plys + 1,WORLD)
+			if best_value is None:
+				best_value = value_of_new_state
+				best_edge = neighbor_tup
 			if self.comparator(best_value, value_of_new_state):
 				best_value = value_of_new_state
 				best_edge = neighbor_tup

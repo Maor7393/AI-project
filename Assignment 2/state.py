@@ -2,7 +2,6 @@ import vertex as v
 import copy as cp
 import graph as g
 from program_variables import TIME_LIMIT
-from program_variables import WORLD
 from program_variables import CUTOFF
 
 
@@ -26,6 +25,10 @@ class Location(object):
 	def __str__(self):
 		return "( " + self.prev.name + ", " + str(self.edge_progress) + ", " + self.successor.name + ")"
 
+	def set_location_parameters(self, prev, edge_progress, successor):
+		self.prev = prev
+		self.edge_progress = edge_progress
+		self.successor = successor
 
 class State:
 
@@ -40,13 +43,13 @@ class State:
 	def get_new_state(self):
 		return State(self.max_agent_current_location, self.min_agent_current_location, self.vertices_status, self.max_agent_score, self.min_agent_score, self.total_simulated_movements)
 
-	def successor(self, type_of_agent: str):
+	def successor(self, type_of_agent: str,WORLD: g.Graph):
 		if type_of_agent == "MAX":
-			return self.max_successor()
+			return self.max_successor(WORLD)
 		elif type_of_agent == "MIN":
-			return self.min_successor()
+			return self.min_successor(WORLD)
 
-	def max_successor(self):
+	def max_successor(self,WORLD):
 		new_states = []
 		if self.max_agent_current_location.edge_progress > 0:
 			new_state = self.get_new_state()
@@ -67,7 +70,7 @@ class State:
 				new_states.append(new_state)
 		return new_states
 
-	def min_successor(self):
+	def min_successor(self,WORLD):
 		new_states = []
 		if self.min_agent_current_location.edge_progress > 0:
 			new_state = self.get_new_state()
@@ -110,7 +113,7 @@ class State:
 		s += "MIN AGENT LOCATION: " + str(self.min_agent_current_location) + "\n"
 		s += "MAX AGENT SCORE: " + str(self.max_agent_score) + ", "
 		s += "MIN AGENT SCORE: " + str(self.min_agent_score) + ", "
-		s += "TOTAL SIMULATED MOVEMENTS" + str(self.total_simulated_movements) + "\n"
+		s += "TOTAL SIMULATED MOVEMENTS: " + str(self.total_simulated_movements) + "\n"
 		for vertex in self.vertices_status:
 			s += vertex.name + ": " + str(self.vertices_status[vertex]) + "\n"
 		return s + "}"

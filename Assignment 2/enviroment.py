@@ -146,16 +146,19 @@ def fully_coop_comparator(tuple1, tuple2):
 
 
 if __name__ == "__main__":
-    program_variables.WORLD = generate_graph("graph.txt")
-    print("THE WORLD:\n", program_variables.WORLD)
-    vertices_status = get_vertices_status_dict_of_graph(program_variables.WORLD)
-    max_starting_vertex, min_starting_vertex = get_starting_vertices(program_variables.WORLD, "v1", "v3")
-    max_agent = a.MaxAgent(max_starting_vertex, min_starting_vertex, vertices_status, None, adversarial_comparator)
-    min_agent = a.MinAgent(max_starting_vertex, min_starting_vertex, vertices_status, max_agent, adversarial_comparator)
+    WORLD = generate_graph("graph.txt")
+    print("THE WORLD:\n", WORLD)
+    vertices_status = get_vertices_status_dict_of_graph(WORLD)
+    max_starting_vertex, min_starting_vertex = get_starting_vertices(WORLD, "v1", "v4")
+    max_agent = a.MaxAgent(max_starting_vertex, min_starting_vertex, vertices_status, [max_starting_vertex, 0, max_starting_vertex], None, adversarial_comparator)
+    min_agent = a.MinAgent(max_starting_vertex, min_starting_vertex, vertices_status, [min_starting_vertex, 0, min_starting_vertex], max_agent, adversarial_comparator)
     max_agent.other_agent = min_agent
     agent_list = [max_agent, min_agent]
     i = 0
     while not a.all_agents_terminated(agent_list):
-        agent_list[i].act()
+        agent_list[i].act(WORLD)
         i += 1
         i = i % 2
+
+    for agent in agent_list:
+        print(agent)
