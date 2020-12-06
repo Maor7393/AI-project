@@ -3,16 +3,11 @@ V v2 1
 V v3 2
 V v4 4
 V v5 5
-V v6 0
 V v7 6
-
 
 E v4 v5 4
 E v1 v7 5
 E v1 v3 2
 E v1 v2 3
 E v3 v2 4
-E v3 v6 1
-E v1 v6 1
 E v3 v4 7
-E v7 v4 10

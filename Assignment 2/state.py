@@ -3,6 +3,7 @@ import copy as cp
 import graph as g
 from program_variables import TIME_LIMIT
 from program_variables import WORLD
+from program_variables import CUTOFF
 
 
 def amount_to_save(vertices_status):
@@ -28,17 +29,16 @@ class Location(object):
 
 class State:
 
-	def __init__(self, max_agent_current_location: Location, min_agent_current_location: Location, vertices_status: dict, max_agent_score: int, min_agent_score: int, max_acc_weight: int, min_acc_weight: int):
+	def __init__(self, max_agent_current_location: Location, min_agent_current_location: Location, vertices_status: dict, max_agent_score: int, min_agent_score: int, total_simulated_movements: int):
 		self.max_agent_current_location = cp.copy(max_agent_current_location)
 		self.min_agent_current_location = cp.copy(min_agent_current_location)
 		self.vertices_status = cp.copy(vertices_status)
 		self.max_agent_score = max_agent_score
 		self.min_agent_score = min_agent_score
-		self.max_acc_weight = max_acc_weight
-		self.min_acc_weight = min_acc_weight
+		self.total_simulated_movements = total_simulated_movements
 
 	def get_new_state(self):
-		return State(self.max_agent_current_location, self.min_agent_current_location, self.vertices_status, self.max_agent_score, self.min_agent_score, self.max_acc_weight, self.min_acc_weight)
+		return State(self.max_agent_current_location, self.min_agent_current_location, self.vertices_status, self.max_agent_score, self.min_agent_score, self.total_simulated_movements)
 
 	def successor(self, type_of_agent: str):
 		if type_of_agent == "MAX":
@@ -51,7 +51,7 @@ class State:
 		if self.max_agent_current_location.edge_progress > 0:
 			new_state = self.get_new_state()
 			new_state.max_agent_current_location = new_state.max_agent_current_location.get_new_closer_location()
-			new_state.max_acc_weight = new_state.max_acc_weight + 1
+			new_state.total_simulated_movements += 1
 			new_states.append(new_state)
 		else:
 			arrived_to_vertex = self.max_agent_current_location.successor
@@ -72,7 +72,7 @@ class State:
 		if self.min_agent_current_location.edge_progress > 0:
 			new_state = self.get_new_state()
 			new_state.min_agent_current_location = new_state.min_agent_current_location.get_new_closer_location()
-			new_state.min_acc_weight = new_state.min_acc_weight + 1
+			new_state.total_simulated_movements += 1
 			new_states.append(new_state)
 		else:
 			arrived_to_vertex = self.min_agent_current_location.successor
@@ -81,7 +81,7 @@ class State:
 				min_new_score = self.min_agent_score + arrived_to_vertex.num_of_people
 				self.mark_save_vertex(arrived_to_vertex)
 			for neighbor_tup in WORLD.expand(arrived_to_vertex):
-				min_new_location = Location(arrived_to_vertex, neighbor_tup[1], neighbor_tup[0])
+				min_new_location = Location(arrived_to_vertex, neighbor_tup[1] - 1, neighbor_tup[0])
 				new_state = self.get_new_state()
 				new_state.min_agent_current_location = min_new_location
 				new_state.min_agent_score = min_new_score
@@ -91,7 +91,7 @@ class State:
 	def mark_save_vertex(self, vertex):
 		self.vertices_status[vertex] = True
 
-	# TODO: implement with MST
+	# TODO: implement with MST?
 	def evaluate(self):
 		return self.max_agent_score, self.min_agent_score
 
@@ -102,11 +102,15 @@ class State:
 				unsaved.append(vertex)
 		return unsaved
 
-	def terminal_state(self):
-		return amount_to_save(self.vertices_status) == 0 or self.min_acc_weight + self.max_acc_weight >= TIME_LIMIT
+	def terminal_state(self, num_of_plys):
+		return amount_to_save(self.vertices_status) == 0 or self.total_simulated_movements >= TIME_LIMIT or num_of_plys >= CUTOFF
 
 	def __str__(self):
-		s = "Current vertex: " + str(self.current_vertex) + "\n{"
+		s = "MAX AGENT LOCATION: " + str(self.max_agent_current_location) + ", "
+		s += "MIN AGENT LOCATION: " + str(self.min_agent_current_location) + "\n"
+		s += "MAX AGENT SCORE: " + str(self.max_agent_score) + ", "
+		s += "MIN AGENT SCORE: " + str(self.min_agent_score) + ", "
+		s += "TOTAL SIMULATED MOVEMENTS" + str(self.total_simulated_movements) + "\n"
 		for vertex in self.vertices_status:
 			s += vertex.name + ": " + str(self.vertices_status[vertex]) + "\n"
 		return s + "}"
@@ -117,8 +121,3 @@ class State:
 				self.vertices_status[vertex] = False
 			else:
 				self.vertices_status[vertex] = True
-
-	def does_current_vertex_need_saving(self):
-		if not self.vertices_status[self.current_vertex]:
-			return True
-		return False

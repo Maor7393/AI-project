@@ -54,6 +54,15 @@ def get_vertices_list_as_vertices_status_dict(vertices_list):
     return vertices_status_dict
 
 
+def get_vertices_status_dict_of_graph(graph: g.Graph):
+    vertices_status = dict()
+    vertices_with_people = get_vertices_with_positive_num_of_people(graph)
+    for vertex in graph.get_vertices():
+        vertices_status[vertex] = True
+    for vertex in vertices_with_people:
+        vertices_status[vertex] = False
+    return vertices_status
+
 # def mst_heuristic(vertex_wrapper):
 #     global world
 #     unsaved_vertices = vertex_wrapper.state.get_unsaved_vertices()
@@ -108,19 +117,15 @@ def query_number_from_user(text, limit):
             print('invalid value: ' + inserted_value + '.. should be a number smaller than ' + str(limit))
     return inserted_num
 
-# if true - tuple1 is better than tuple2
-def max_adverserial_comparator(tuple1,tuple2):
-    if tuple1 is None:
-        return False
 
-    return True if tuple1[0] - tuple1[1] >= tuple2[0] - tuple2[1] else False
+def get_starting_vertices(graph: g.Graph, name1, name2):
+    return graph.get_vertex(name1),graph.get_vertex(name2)
 
 
-def min_adverserial_comparator(tuple1, tuple2):
-    if tuple1 is None:
-        return False
-    return True if tuple1[1] - tuple1[0] >= tuple2[1] - tuple2[0] else False
-
+def adversarial_comparator(tuple1, tuple2):
+    mine_delta = tuple1[0] - tuple1[1]
+    his_delta = tuple2[0] - tuple2[1]
+    return True if mine_delta >= his_delta else False
 
 def max_semi_coop_comparator(tuple1, tuple2):
     if tuple1 is None:
@@ -139,5 +144,18 @@ def fully_coop_comparator(tuple1, tuple2):
         return False
     return True if tuple1[0] + tuple1[1] > tuple2[0] + tuple2[1] else False
 
+
 if __name__ == "__main__":
-    pass
+    program_variables.WORLD = generate_graph("graph.txt")
+    print("THE WORLD:\n", program_variables.WORLD)
+    vertices_status = get_vertices_status_dict_of_graph(program_variables.WORLD)
+    max_starting_vertex, min_starting_vertex = get_starting_vertices(program_variables.WORLD, "v1", "v3")
+    max_agent = a.MaxAgent(max_starting_vertex, min_starting_vertex, vertices_status, None, adversarial_comparator)
+    min_agent = a.MinAgent(max_starting_vertex, min_starting_vertex, vertices_status, max_agent, adversarial_comparator)
+    max_agent.other_agent = min_agent
+    agent_list = [max_agent, min_agent]
+    i = 0
+    while not a.all_agents_terminated(agent_list):
+        agent_list[i].act()
+        i += 1
+        i = i % 2
