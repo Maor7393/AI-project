@@ -1,3 +1,0 @@
-- debug ahusharmuta of minimax
-- handle the case where there are people in the initial vertex.
--

@@ -58,13 +58,15 @@ class State:
 			new_states.append(new_state)
 		else:
 			arrived_to_vertex = self.max_agent_current_location.successor
-			max_new_score = self.max_agent_score
-			if not self.vertices_status[arrived_to_vertex]:
-				max_new_score = self.max_agent_score + arrived_to_vertex.num_of_people
-				self.mark_save_vertex(arrived_to_vertex)
 			for neighbor_tup in WORLD.expand(arrived_to_vertex):
-				max_new_location = Location(arrived_to_vertex, neighbor_tup[1] - 1, neighbor_tup[0])
+				max_new_score = self.max_agent_score
+				progress = neighbor_tup[1] - 1
+				max_new_location = Location(arrived_to_vertex, progress, neighbor_tup[0])
 				new_state = self.get_new_state()
+				if progress == 0:
+					if not new_state.vertices_status[neighbor_tup[0]]:
+						max_new_score = self.max_agent_score + neighbor_tup[0].num_of_people
+						new_state.mark_save_vertex(neighbor_tup[0])
 				new_state.max_agent_current_location = max_new_location
 				new_state.max_agent_score = max_new_score
 				new_states.append(new_state)
@@ -79,13 +81,15 @@ class State:
 			new_states.append(new_state)
 		else:
 			arrived_to_vertex = self.min_agent_current_location.successor
-			min_new_score = self.min_agent_score
-			if not self.vertices_status[arrived_to_vertex]:
-				min_new_score = self.min_agent_score + arrived_to_vertex.num_of_people
-				self.mark_save_vertex(arrived_to_vertex)
 			for neighbor_tup in WORLD.expand(arrived_to_vertex):
-				min_new_location = Location(arrived_to_vertex, neighbor_tup[1] - 1, neighbor_tup[0])
+				min_new_score = self.min_agent_score
+				progress = neighbor_tup[1] - 1
 				new_state = self.get_new_state()
+				min_new_location = Location(arrived_to_vertex, neighbor_tup[1] - 1, neighbor_tup[0])
+				if progress == 0:
+					if not new_state.vertices_status[neighbor_tup[0]]:
+						min_new_score = self.min_agent_score + neighbor_tup[0].num_of_people
+						new_state.mark_save_vertex(neighbor_tup[0])
 				new_state.min_agent_current_location = min_new_location
 				new_state.min_agent_score = min_new_score
 				new_states.append(new_state)

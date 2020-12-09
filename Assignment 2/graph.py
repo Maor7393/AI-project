@@ -24,6 +24,13 @@ class Graph(object):
                 vertex_to_ret = vertex
         return vertex_to_ret
 
+    def get_edge(self, vertex1, vertex2: v.Vertex):
+        neighbors = self.expand(vertex1)
+        for neighbor_tup in neighbors:
+            if neighbor_tup[0].name == vertex2.name:
+                return vertex1, neighbor_tup[1], vertex2
+        return None
+
     def vertices_names(self):
         name_list = []
         for vertex in self.get_vertices():
