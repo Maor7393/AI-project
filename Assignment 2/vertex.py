@@ -20,6 +20,8 @@ def all_vertex_saved(vertices_list):
 		if vertex.num_of_people > 0:
 			return False
 	return True
+
+
 def get_vertices_list_as_string(vertices_list):
 	s = "[ "
 	for vertex in vertices_list:

@@ -1,7 +1,8 @@
 import graph as g
 import vertex as v
 import agent as a
-import program_variables
+import os
+
 
 
 def generate_time_limit(file_name):
@@ -146,10 +147,13 @@ def fully_coop_comparator(tuple1, tuple2):
 
 
 if __name__ == "__main__":
-    WORLD = generate_graph("graph.txt")
+    cwd = os.getcwd()  # Get the current working directory (cwd)
+    files = os.listdir(cwd)  # Get all the files in that directory
+    print("Files in %r: %s" % (cwd, files))
+    WORLD = generate_graph("Assignment 2/input.txt")
     print("THE WORLD:\n", WORLD)
     vertices_status = get_vertices_status_dict_of_graph(WORLD)
-    max_starting_vertex, min_starting_vertex = get_starting_vertices(WORLD, "v1", "v4")
+    max_starting_vertex, min_starting_vertex = get_starting_vertices(WORLD, "v1", "v3")
     max_agent = a.MaxAgent(max_starting_vertex, min_starting_vertex, vertices_status, [max_starting_vertex, 0, max_starting_vertex], None, adversarial_comparator)
     min_agent = a.MinAgent(max_starting_vertex, min_starting_vertex, vertices_status, [min_starting_vertex, 0, min_starting_vertex], max_agent, adversarial_comparator)
     max_agent.other_agent = min_agent
