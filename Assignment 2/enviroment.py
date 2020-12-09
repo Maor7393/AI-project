@@ -143,8 +143,8 @@ if __name__ == "__main__":
 	print("THE WORLD:\n", WORLD)
 	vertices_status = get_vertices_status_dict_of_graph(WORLD)
 	max_starting_vertex, min_starting_vertex = get_starting_vertices(WORLD, "v1", "v3")
-	max_agent = a.MaxAgent(max_starting_vertex, min_starting_vertex, vertices_status, [max_starting_vertex, 0, max_starting_vertex], None, adversarial_comparator)
-	min_agent = a.MinAgent(max_starting_vertex, min_starting_vertex, vertices_status, [min_starting_vertex, 0, min_starting_vertex], max_agent, adversarial_comparator)
+	max_agent = a.MaxAgent(max_starting_vertex, min_starting_vertex, vertices_status, [max_starting_vertex, 0, max_starting_vertex], None, a.MaxAgent.adversarial_comparator)
+	min_agent = a.MinAgent(max_starting_vertex, min_starting_vertex, vertices_status, [min_starting_vertex, 0, min_starting_vertex], max_agent, a.MaxAgent.adversarial_comparator)
 	max_agent.other_agent = min_agent
 	agent_list = [max_agent, min_agent]
 	i = 0
