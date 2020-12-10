@@ -2,7 +2,7 @@ import graph as g
 import vertex as v
 import agent as a
 import os
-
+import compartors as cmp
 
 def generate_time_limit(file_name):
 	file = open(file_name)
@@ -112,39 +112,13 @@ def get_starting_vertices(graph: g.Graph, name1, name2):
 	return graph.get_vertex(name1), graph.get_vertex(name2)
 
 
-def adversarial_comparator(tuple1, tuple2):
-	mine_delta = tuple1[0] - tuple1[1]
-	his_delta = tuple2[0] - tuple2[1]
-	return True if mine_delta >= his_delta else False
-
-
-def fully_coop_comparator(tuple1, tuple2):
-	mine_result = tuple1[0] + tuple1[1]
-	his_result = tuple2[0] + tuple2[1]
-	return True if mine_result > his_result else False
-
-
-def max_semi_coop_comparator(tuple1, tuple2):
-	is_mine_result_better = tuple1[0] > tuple2[0]
-	is_mine_result_equal = tuple1[0] == tuple2[0]
-	his_result_better = tuple1[1] >= tuple2[1]
-	return True if is_mine_result_better or (is_mine_result_equal and his_result_better) else False
-
-
-def min_semi_coop_comparator(tuple1, tuple2):
-	is_mine_result_better = tuple1[1] > tuple2[1]
-	is_mine_result_equal = tuple1[1] == tuple2[1]
-	his_result_better = tuple1[0] >= tuple2[0]
-	return True if is_mine_result_better or (is_mine_result_equal and his_result_better) else False
-
-
 if __name__ == "__main__":
 	WORLD = generate_graph("Assignment 2/input.txt")
 	print("THE WORLD:\n", WORLD)
 	vertices_status = get_vertices_status_dict_of_graph(WORLD)
-	max_starting_vertex, min_starting_vertex = get_starting_vertices(WORLD, "v1", "v3")
-	max_agent = a.MaxAgent(max_starting_vertex, min_starting_vertex, vertices_status, [max_starting_vertex, 0, max_starting_vertex], None, a.MaxAgent.adversarial_comparator)
-	min_agent = a.MinAgent(max_starting_vertex, min_starting_vertex, vertices_status, [min_starting_vertex, 0, min_starting_vertex], max_agent, a.MaxAgent.adversarial_comparator)
+	max_starting_vertex, min_starting_vertex = get_starting_vertices(WORLD, "v1", "v1")
+	max_agent = a.MaxAgent(max_starting_vertex, min_starting_vertex, vertices_status, [max_starting_vertex, 0, max_starting_vertex], None, cmp.max_adversarial_comparator)
+	min_agent = a.MinAgent(max_starting_vertex, min_starting_vertex, vertices_status, [min_starting_vertex, 0, min_starting_vertex], max_agent, cmp.min_adversarial_comparator)
 	max_agent.other_agent = min_agent
 	agent_list = [max_agent, min_agent]
 	i = 0
