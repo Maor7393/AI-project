@@ -30,6 +30,7 @@ class Location(object):
 		self.edge_progress = edge_progress
 		self.successor = successor
 
+
 class State:
 
 	def __init__(self, max_agent_current_location: Location, min_agent_current_location: Location, vertices_status: dict, max_agent_score: int, min_agent_score: int, total_simulated_movements: int):
@@ -114,6 +115,9 @@ class State:
 	# TODO: implement with MST?
 	def evaluate(self):
 		return self.max_agent_score, self.min_agent_score
+
+	def evaluate_alpha_beta(self):
+		return self.max_agent_score - self.min_agent_score
 
 	def get_unsaved_vertices(self):
 		unsaved = []

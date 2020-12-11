@@ -1,7 +1,7 @@
 import graph as g
 import vertex as v
 import agent as a
-import os
+from program_variables import CUTOFF,TIME_LIMIT
 import compartors as cmp
 
 def generate_time_limit(file_name):
@@ -113,13 +113,36 @@ def get_starting_vertices(graph: g.Graph, name1, name2):
 
 
 if __name__ == "__main__":
-	WORLD = generate_graph("Assignment 2/input.txt")
-	print("THE WORLD:\n", WORLD)
+	WORLD = generate_graph("Assignment 2/input_semi_fully.txt")
+	print('Please enter the desired type of game:\n')
+	print('For Adversarial with Alpha-Beta Pruning press 1')
+	print('For Semi-Cooperative press 2')
+	print('for Fully-Cooperative press 3')
+	game_type = query_number_from_user('', 4)
+	print("THE VERTICES: ", v.get_vertices_list_as_string(WORLD.get_vertices()))
+	print("Choose starting vertex for first agent:")
+	max_starting_vertex = WORLD.get_vertex(input())
+	print("Choose starting vertex for second agent:")
+	min_starting_vertex = WORLD.get_vertex(input())
 	vertices_status = get_vertices_status_dict_of_graph(WORLD)
-	max_starting_vertex, min_starting_vertex = get_starting_vertices(WORLD, "v1", "v1")
-	max_agent = a.MaxAgent(max_starting_vertex, min_starting_vertex, vertices_status, [max_starting_vertex, 0, max_starting_vertex], None, cmp.max_adversarial_comparator)
-	min_agent = a.MinAgent(max_starting_vertex, min_starting_vertex, vertices_status, [min_starting_vertex, 0, min_starting_vertex], max_agent, cmp.min_adversarial_comparator)
-	max_agent.other_agent = min_agent
+	max_agent = None
+	min_agent = None
+	if game_type == 1:
+		max_agent = a.MaxAgent(max_starting_vertex, min_starting_vertex, vertices_status,[max_starting_vertex, 0, max_starting_vertex], None, cmp.max_adversarial_comparator, True)
+		min_agent = a.MinAgent(max_starting_vertex, min_starting_vertex, vertices_status,[min_starting_vertex, 0, min_starting_vertex], max_agent, cmp.min_adversarial_comparator, True)
+		max_agent.other_agent = min_agent
+
+	elif game_type == 2:
+		max_agent = a.MaxAgent(max_starting_vertex, min_starting_vertex, vertices_status, [max_starting_vertex, 0, max_starting_vertex], None, cmp.max_semi_cooperative_comparator, False)
+		min_agent = a.MinAgent(max_starting_vertex, min_starting_vertex, vertices_status, [min_starting_vertex, 0, min_starting_vertex], max_agent, cmp.min_semi_cooperative_comparator, False)
+		max_agent.other_agent = min_agent
+
+	else:
+		max_agent = a.MaxAgent(max_starting_vertex, min_starting_vertex, vertices_status, [max_starting_vertex, 0, max_starting_vertex], None, cmp.fully_cooperative_comparator, False)
+		min_agent = a.MinAgent(max_starting_vertex, min_starting_vertex, vertices_status, [min_starting_vertex, 0, min_starting_vertex], max_agent, cmp.fully_cooperative_comparator, False)
+		max_agent.other_agent = min_agent
+
+	print("THE WORLD:\n", WORLD, "\nDEADLINE: ", TIME_LIMIT, "CUTOFF: ", CUTOFF)
 	agent_list = [max_agent, min_agent]
 	i = 0
 	while not a.all_agents_terminated(agent_list):
@@ -129,3 +152,5 @@ if __name__ == "__main__":
 
 	for agent in agent_list:
 		print(agent)
+
+	print("WORLD AT END:\n", WORLD)
