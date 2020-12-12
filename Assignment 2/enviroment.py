@@ -128,8 +128,8 @@ if __name__ == "__main__":
 	max_agent = None
 	min_agent = None
 	if game_type == 1:
-		max_agent = a.MaxAgent(max_starting_vertex, min_starting_vertex, vertices_status,[max_starting_vertex, 0, max_starting_vertex], None, cmp.max_adversarial_comparator, True)
-		min_agent = a.MinAgent(max_starting_vertex, min_starting_vertex, vertices_status,[min_starting_vertex, 0, min_starting_vertex], max_agent, cmp.min_adversarial_comparator, True)
+		max_agent = a.MaxAgent(max_starting_vertex, min_starting_vertex, vertices_status,[max_starting_vertex, 0, max_starting_vertex], None, None, True)
+		min_agent = a.MinAgent(max_starting_vertex, min_starting_vertex, vertices_status,[min_starting_vertex, 0, min_starting_vertex], max_agent, None, True)
 		max_agent.other_agent = min_agent
 
 	elif game_type == 2:

@@ -115,6 +115,7 @@ class Agent:
 			beta = min(beta, v)
 		return v
 
+
 class MaxAgent(Agent):
 
 	def __init_(self, max_starting_vertex, min_starting_vertex, vertices_status, act_sequence, min_agent, comparator, prune):
@@ -132,7 +133,7 @@ class MaxAgent(Agent):
 		self.state.update_vertices_status(WORLD)
 		self.state.max_agent_score = self.real_score
 		self.state.min_agent_score = self.other_agent.real_score
-		self.state.total_simulated_movements = Agent.num_of_real_movements
+		self.state.simulated_movements = Agent.num_of_real_movements
 
 	def minimax(self, state: s.State, WORLD: Graph):
 		best_value = None
@@ -202,7 +203,7 @@ class MinAgent(Agent):
 	def update_state(self, WORLD):
 		self.state.max_agent_current_location = self.other_agent.state.max_agent_current_location
 		self.state.update_vertices_status(WORLD)
-		self.state.total_simulated_movements = Agent.num_of_real_movements
+		self.state.simulated_movements = Agent.num_of_real_movements
 		self.state.max_agent_score = self.other_agent.real_score
 		self.state.min_agent_score = self.real_score
 

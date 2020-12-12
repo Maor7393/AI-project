@@ -1,0 +1,3 @@
+1. check more alpha beta pruning
+2. check that it didn't destroy other games
+3. change comparator of fully-coop to consider number of movements.

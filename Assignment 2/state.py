@@ -39,10 +39,10 @@ class State:
 		self.vertices_status = cp.copy(vertices_status)
 		self.max_agent_score = max_agent_score
 		self.min_agent_score = min_agent_score
-		self.total_simulated_movements = total_simulated_movements
+		self.simulated_movements = total_simulated_movements
 
 	def get_new_state(self):
-		return State(self.max_agent_current_location, self.min_agent_current_location, self.vertices_status, self.max_agent_score, self.min_agent_score, self.total_simulated_movements)
+		return State(self.max_agent_current_location, self.min_agent_current_location, self.vertices_status, self.max_agent_score, self.min_agent_score, self.simulated_movements)
 
 	def successor(self, type_of_agent: str,WORLD: g.Graph):
 		if type_of_agent == "MAX":
@@ -55,14 +55,13 @@ class State:
 		if self.max_agent_current_location.edge_progress > 0:
 			new_state = self.get_new_state()
 			new_state.max_agent_current_location = new_state.max_agent_current_location.get_new_closer_location()
-			new_state.total_simulated_movements += 1
+			new_state.simulated_movements += 1
 			new_states.append(new_state)
 			if new_state.max_agent_current_location.edge_progress == 0:
 				if not new_state.vertices_status[new_state.max_agent_current_location.successor]:
 					max_new_score = new_state.max_agent_score + new_state.max_agent_current_location.successor.num_of_people
 					new_state.mark_save_vertex(new_state.max_agent_current_location.successor)
 					new_state.max_agent_score = max_new_score
-
 		else:
 			arrived_to_vertex = self.max_agent_current_location.successor
 			for neighbor_tup in WORLD.expand(arrived_to_vertex):
@@ -70,7 +69,7 @@ class State:
 				progress = neighbor_tup[1] - 1
 				max_new_location = Location(arrived_to_vertex, progress, neighbor_tup[0])
 				new_state = self.get_new_state()
-				new_state.total_simulated_movements += 1
+				new_state.simulated_movements += 1
 				if progress == 0:
 					if not new_state.vertices_status[neighbor_tup[0]]:
 						max_new_score = self.max_agent_score + neighbor_tup[0].num_of_people
@@ -85,7 +84,7 @@ class State:
 		if self.min_agent_current_location.edge_progress > 0:
 			new_state = self.get_new_state()
 			new_state.min_agent_current_location = new_state.min_agent_current_location.get_new_closer_location()
-			new_state.total_simulated_movements += 1
+			new_state.simulated_movements += 1
 			new_states.append(new_state)
 			if new_state.min_agent_current_location.edge_progress == 0:
 				if not new_state.vertices_status[new_state.min_agent_current_location.successor]:
@@ -98,7 +97,7 @@ class State:
 				min_new_score = self.min_agent_score
 				progress = neighbor_tup[1] - 1
 				new_state = self.get_new_state()
-				new_state.total_simulated_movements += 1
+				new_state.simulated_movements += 1
 				min_new_location = Location(arrived_to_vertex, neighbor_tup[1] - 1, neighbor_tup[0])
 				if progress == 0:
 					if not new_state.vertices_status[neighbor_tup[0]]:
@@ -112,9 +111,8 @@ class State:
 	def mark_save_vertex(self, vertex):
 		self.vertices_status[vertex] = True
 
-	# TODO: implement with MST?
 	def evaluate(self):
-		return self.max_agent_score, self.min_agent_score
+		return self.max_agent_score, self.min_agent_score, self.simulated_movements
 
 	def evaluate_alpha_beta(self):
 		return self.max_agent_score - self.min_agent_score
@@ -127,14 +125,14 @@ class State:
 		return unsaved
 
 	def terminal_state(self, num_of_plys):
-		return amount_to_save(self.vertices_status) == 0 or self.total_simulated_movements >= TIME_LIMIT or num_of_plys >= CUTOFF
+		return amount_to_save(self.vertices_status) == 0 or self.simulated_movements >= TIME_LIMIT or num_of_plys >= CUTOFF
 
 	def __str__(self):
 		s = "MAX AGENT LOCATION: " + str(self.max_agent_current_location) + ", "
 		s += "MIN AGENT LOCATION: " + str(self.min_agent_current_location) + "\n"
 		s += "MAX AGENT SCORE: " + str(self.max_agent_score) + ", "
 		s += "MIN AGENT SCORE: " + str(self.min_agent_score) + ", "
-		s += "TOTAL SIMULATED MOVEMENTS: " + str(self.total_simulated_movements) + "\n"
+		s += "TOTAL SIMULATED MOVEMENTS: " + str(self.simulated_movements) + "\n"
 		for vertex in self.vertices_status:
 			s += vertex.name + ": " + str(self.vertices_status[vertex]) + "\n"
 		return s + "}"
