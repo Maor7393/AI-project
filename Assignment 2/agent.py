@@ -253,7 +253,6 @@ class MinAgent(Agent):
 		for next_state in state.successor("MIN", WORLD):
 			value_of_new_state = self.max_value_alpha_beta(next_state, num_of_plys + 1, WORLD, alpha, beta)
 			current_edge = WORLD.get_edge(next_state.min_agent_current_location.prev, next_state.min_agent_current_location.successor)
-			print(v, value_of_new_state)
 			if v > value_of_new_state:
 				v = value_of_new_state
 				best_edge = current_edge
