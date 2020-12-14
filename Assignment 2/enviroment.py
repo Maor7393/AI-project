@@ -113,7 +113,7 @@ def get_starting_vertices(graph: g.Graph, name1, name2):
 
 
 if __name__ == "__main__":
-	WORLD = generate_graph("Assignment 2/input_semi_fully.txt")
+	WORLD = generate_graph("Assignment 2/input.txt")
 	print('Please enter the desired type of game:\n')
 	print('For Adversarial with Alpha-Beta Pruning press 1')
 	print('For Semi-Cooperative press 2')
