@@ -7,14 +7,6 @@ class Vertex(object):
 		return "[" + self.name + ", " + str(self.num_of_people) + "]"
 
 
-class VertexWrapper(object):
-
-	def __init__(self, state, parent_wrapper, acc_weight):
-		self.state = state
-		self.parent_wrapper = parent_wrapper
-		self.acc_weight = acc_weight
-
-
 def all_vertex_saved(vertices_list):
 	for vertex in vertices_list:
 		if vertex.num_of_people > 0:
