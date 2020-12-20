@@ -3,4 +3,4 @@ import names
 
 if __name__ == '__main__':
     network = create_bayes_network(names.input_file)
-    print(network)
+    print(network.str_graph_structure())

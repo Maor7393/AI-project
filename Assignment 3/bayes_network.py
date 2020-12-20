@@ -66,6 +66,25 @@ class BayesNetwork:
                 return node
         return None
 
+    def str_graph_structure(self):
+        s = 'children dictionary: \n'
+        for node in self.children_dict.keys():
+            s += node.name
+            s += ', children: '
+            for child_weight in self.children_dict[node]:
+                s += '[' + child_weight[0].name + ', weight=' + str(child_weight[1]) + '], '
+            s += '\n'
+
+        s += '\nparents dictionary: \n'
+        for node in self.parents_dict.keys():
+            s += node.name
+            s += ', parents: '
+            for parent_weight in self.parents_dict[node]:
+                s += '[' + parent_weight[0].name + ' ,weight=' + str(parent_weight[1]) + '], '
+            s += '\n'
+        return s
+
+
     def __str__(self):
         s = 'Bayes Network:'
         s += 'nodes: \n'
