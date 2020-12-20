@@ -12,3 +12,12 @@ class Table:
     def get_entry(self, evidence: list[tuple]):
         pass
         # TODO: implement
+
+    def __str__(self):
+        s = ""
+        s += "-------------------------------"
+        for table_entry in self.table_dict.keys():
+            s += "P(True | " + str(table_entry) + ")= " + str(self.table_dict.get(table_entry)) + "\n"
+            s += "P(False | " + str(table_entry) + ")= " + str(1 - self.table_dict.get(table_entry)) + "\n"
+        s += "-------------------------------\n"
+        return s
