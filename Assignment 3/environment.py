@@ -6,8 +6,7 @@ if __name__ == '__main__':
     network = create_bayes_network(names.input_file)
     print(network)
     print(network.str_graph_structure())
-    x_query = ["v1", "v2"]
+    x_query = input("Enter query separated by whitespace").split()
     evidence = set()
     print(enumeration_ask(x_query, evidence, network))
 
-# def enumeration_ask(x_query: list, evidence: set, bayes_network: BayesNetwork):
