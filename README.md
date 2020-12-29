@@ -8,4 +8,5 @@ Introduction to Artificial Intelligence is an elective/advanced course for bache
 ## Assignments
 #### [Assignment 1: Environments and search](https://www.cs.bgu.ac.il/~shimony/AI2021/AIass1.html)
 #### [Assignment 2: Games](https://www.cs.bgu.ac.il/~shimony/AI2021/AIass2.html)
-#### [Assignment 3: Reasoning under uncertainty](https://www.cs.bgu.ac.il/~iai211/wiki.files/AIass4[1].html)
+#### [Assignment 3: Probabilistic reasoning](https://www.cs.bgu.ac.il/~iai211/wiki.files/AIass4[3].html)
+#### [Assignment 4: Partial observability - decision-making](https://www.cs.bgu.ac.il/~iai211/wiki.files/AIass5.html)
