@@ -26,7 +26,7 @@ class Table:
 			else:
 				self.table_dict[tuples[0]] = value
 
-	def get_probability_given_parents(self, var_name, value: bool, parents: list) -> float:
+	def get_probability_given_parents(self, value: bool, parents: list) -> float:
 		if len(parents) == 0:
 			if value is True:
 				return self.table_dict[names.empty]

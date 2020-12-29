@@ -23,7 +23,6 @@ def get_variables_assignment_set(vars_list):
 if __name__ == '__main__':
     network = create_bayes_network(names.input_file)
     print(network)
-    print(network.str_graph_structure())
     print('Welcome to the Shimoneiz!!!')
     print('Query Options: ')
     print('1) What is the probability that each of the vertices contains evacuees?')
@@ -34,12 +33,12 @@ if __name__ == '__main__':
     evidence = get_variables_assignment_set(variables_list)
     x_query = []
     if query_number == 1:
-        x_query = [item.name for item in network.get_all_nodes() if item.name[0] == 'v']
+        x_query = [input("Type vertex name\n")]
         distribution = enumeration_ask(x_query, evidence, network)
         all_evacuees_entry = [True for item in x_query]
         print('The probability is: ', distribution[tuple(all_evacuees_entry)])
     elif query_number == 2:
-        x_query = [item.name for item in network.get_all_nodes() if item.name[0] == 'e' and item.name[len(item.name) - 1] == '0']
+        x_query = [input("Type Edge name name and time (i.e e1_t:0 e2_t:1)\n")]
         distribution = enumeration_ask(x_query, evidence, network)
         all_blocked_entry = [True for item in x_query]
         print('The probability is: ', distribution[tuple(all_blocked_entry)])

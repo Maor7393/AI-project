@@ -143,15 +143,15 @@ def enumeration_all(variables, evidence, bayes_network):
     has_val, val = has_value_in_evidence(Y, evidence)
     Y_parents = get_parent_assignment_in_evidence(Y, evidence, bayes_network)
     if has_val:
-        prob_Y_given_parents = Y_node.table.get_probability_given_parents(Y, val, Y_parents)
+        prob_Y_given_parents = Y_node.table.get_probability_given_parents(val, Y_parents)
         return prob_Y_given_parents * enumeration_all(variables[1:], evidence, bayes_network)
     else:
-        prob_Y_false = Y_node.table.get_probability_given_parents(Y, False, Y_parents) * enumeration_all(variables[1:],
+        prob_Y_false = Y_node.table.get_probability_given_parents(False, Y_parents) * enumeration_all(variables[1:],
                                                                                                          evidence.union(
                                                                                                              {(Y,
                                                                                                                False)}),
                                                                                                          bayes_network)
-        prob_Y_true = Y_node.table.get_probability_given_parents(Y, True, Y_parents) * enumeration_all(variables[1:],
+        prob_Y_true = Y_node.table.get_probability_given_parents(True, Y_parents) * enumeration_all(variables[1:],
                                                                                                        evidence.union(
                                                                                                            {(Y, True)}),
                                                                                                        bayes_network)
@@ -162,10 +162,11 @@ def normalize(distribution):
     acc = 0
     for value in distribution.values():
         acc += value
-    for key_value in distribution.items():
-        key = key_value[0]
-        value = key_value[1]
-        distribution[key] = round(value / acc, 2)
+    if not acc == 0:
+        for key_value in distribution.items():
+            key = key_value[0]
+            value = key_value[1]
+            distribution[key] = round(value / acc, 3)
     return distribution
 
 
