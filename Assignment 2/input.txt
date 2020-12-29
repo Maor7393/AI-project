@@ -1,0 +1,14 @@
+V v1 0
+V v2 1
+V v3 1
+V v4 0
+V v5 1
+
+E v1 v2 1
+E v1 v3 1
+E v3 v4 1
+E v1 v5 2
+
+
+
+
