@@ -14,6 +14,14 @@ class Graph(object):
     def get_vertices(self):
         return list(self.graph_dict.keys())
 
+    def get_adjacent_blockable_edges(self,vertex):
+        blockable_edges = []
+        for neighbor_tup in self.expand(vertex):
+            if neighbor_tup[2].blocked_in_prob > 0:
+                blockable_edges.append(neighbor_tup[2])
+        return blockable_edges
+
+
     def get_edges(self):
         edges = set()
         for vertex in self.graph_dict:

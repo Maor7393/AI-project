@@ -2,6 +2,7 @@ import itertools
 import graph as g
 import vertex as v
 import state as s
+from state import State
 import names
 
 
