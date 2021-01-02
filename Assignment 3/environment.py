@@ -23,7 +23,6 @@ def get_variables_assignment_set(vars_list):
 if __name__ == '__main__':
     network = create_bayes_network(names.input_file)
     print(network)
-    print('Welcome to the Shimoneiz!!!')
     print('Query Options: ')
     print('1) What is the probability that each of the vertices contains evacuees?')
     print('2) What is the probability that each of the edges is blocked?')

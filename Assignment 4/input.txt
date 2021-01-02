@@ -1,0 +1,11 @@
+V v1 0
+V v2 0
+V v3 0
+V v4 0
+V v5 1
+
+E v1 v2 e1 3 0
+E v2 v3 e2 2 0.7
+E v3 v4 e3 3 0.3
+E v4 v5 e4 1 0
+E v2 v4 e5 4 0
