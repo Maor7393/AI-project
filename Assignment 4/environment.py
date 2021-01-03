@@ -3,8 +3,7 @@ import graph as g
 import vertex as v
 import state as s
 import names
-from mdp import consistent_states
-from mdp import transition
+from mdp import value_iteration
 
 
 def generate_graph(file_name):
@@ -40,19 +39,19 @@ def generate_graph(file_name):
 
 if __name__ == '__main__':
     graph = generate_graph(names.input_file)
-    print(graph)
-    all_states = s.generate_states(graph)
-    print(s.state_list_as_string(all_states))
-    print("------------------------------------------------------")
-    for i in range(len(all_states)):
-        for j in range(len(all_states)):
-            if i == j:
-                continue
-            state1 = all_states[i]
-            state2 = all_states[j]
-            trans = transition(state1, state2, graph)
-            print("----------------------")
-            print("Prob:", trans, "\n", state1, state2)
-            print("----------------------")
+    print("Welcome back NOA, hope you'll find your evacuees for today")
+    print("The vertices:", graph.vertices_names())
+    starting_vertex = graph.get_vertex(input("type starting vertex\n"))
+    target_vertex = graph.get_vertex(input("type target vertex\n"))
+    target_vertex.target = True
+    states = s.generate_states(graph)
+    policies = value_iteration(states,graph)
+    for policy_item in policies.items():
+        state = policy_item[0]
+        utility = policy_item[1][0]
+        action = policy_item[1][1]
+        print(state, "UTILITY:", utility, "ACTION: ", action)
+
+
 
 

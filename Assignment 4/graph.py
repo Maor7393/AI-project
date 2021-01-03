@@ -47,20 +47,14 @@ class Graph(object):
     def expand_just_vertices(self, vertex):
         return list(map(lambda neighbor_tup: neighbor_tup[0], self.expand(vertex)))
 
+    def expand_just_edges(self, vertex):
+        return list(map(lambda neighbor_tup: neighbor_tup[2], self.expand(vertex)))
+
     def get_edge_weight(self, vertex1, vertex2):
         neighbors = self.expand(vertex1)
         for neighbor in neighbors:
             if neighbor[0].name == vertex2.name:
                 return neighbor[1]
-
-    def get_closest_neighbor(self, vertex):
-        min_weight = sys.maxsize
-        min_neighbor_tup = None
-        for neighbor_tup in self.expand(vertex):
-            if min_weight >= neighbor_tup[1]:
-                min_weight = neighbor_tup[1]
-                min_neighbor_tup = neighbor_tup
-        return min_neighbor_tup
 
     def vertex_exists(self, vertex):
         return vertex.name in self.vertices_names()
@@ -71,6 +65,13 @@ class Graph(object):
             if vertex2 == neighbor_tup[0]:
                 return True
         return False
+
+    def get_edge(self, vertex1: v.Vertex, vertex2: v.Vertex) -> Edge:
+        neighbor_list = self.expand(vertex1)
+        for neighbor_tup in neighbor_list:
+            if vertex2 == neighbor_tup[0]:
+                return neighbor_tup[2]
+        return None
 
     def add_vertex(self, vertex):
         if not self.vertex_exists(vertex):

@@ -2,6 +2,7 @@ import vertex as v
 import copy as cp
 import graph as g
 import names
+from edge import Edge
 import itertools
 
 
@@ -15,7 +16,7 @@ def generate_states(graph: g.Graph):
 		edges_status = dict(zip(blockable_edges, possibility))
 		for vertex in vertices:
 			states.append(State(vertex, edges_status))
-	return filter_bad_states(states,graph)
+	return filter_bad_states(states, graph)
 
 
 class State:
@@ -26,6 +27,9 @@ class State:
 
 	def same_status(self, other) -> bool:
 		return self.edges_status == other.edges_status
+
+	def get_actions_from(self, world: g.Graph) -> list[Edge]:
+		return world.expand_just_edges(self.current_vertex)
 
 	def __str__(self):
 		s = "STATE\nCurrent vertex: " + str(self.current_vertex) + "\n{"
@@ -50,6 +54,8 @@ def consistent_states(state1: State, state2: State) -> bool:
 	return True
 
 
+
+
 def discovered_edges(state1: State, state2: State) -> list:
 	edges = []
 	for blockable_edge in state1.edges_status.keys():
@@ -58,6 +64,7 @@ def discovered_edges(state1: State, state2: State) -> list:
 				zero_or_one = state2.edges_status[blockable_edge]
 				edges.append((blockable_edge, zero_or_one))
 	return edges
+
 
 def filter_bad_states(states:list[State],graph:g.Graph) -> list[State]:
 	filtered_states = []

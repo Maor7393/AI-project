@@ -3,18 +3,14 @@ from functools import reduce
 
 from state import State
 from graph import Graph
-from state import consistent_states,discovered_edges
+from state import consistent_states, discovered_edges
 import names
+
 
 def transition(s1: State, s2: State, world: Graph) -> float:
 	source_vertex = s1.current_vertex
 	destination_vertex = s2.current_vertex
 	blockable_edges_from_dest = world.get_adjacent_blockable_edges(destination_vertex)
-	if source_vertex.name == "v1" and destination_vertex.name == "v2":
-		if list(s1.edges_status.values()) == [names.U, names.U] and (list(s2.edges_status.values())[1] == names.U or list(s2.edges_status.values())[0]) :
-			pass
-	if not world.edge_exists(source_vertex, destination_vertex):
-		return 0
 	if s1.same_status(s2):
 		for blockable_edge in blockable_edges_from_dest:
 			if s2.edges_status[blockable_edge] == names.U:
@@ -37,3 +33,48 @@ def transition(s1: State, s2: State, world: Graph) -> float:
 		else:
 			prob *= (1 - edge_tup[0].blocked_in_prob)
 	return round(prob, 2)
+
+
+def initialize_policies(policies: dict, states: list[State]):
+	for state in states:
+		if state.current_vertex.target:
+			policies[state] = (0, names.finish)
+		else:
+			policies[state] = (0, None)
+
+
+def value_iteration(states: list[State], world: Graph) -> dict:
+	policies_prev = dict()
+	policies_next = dict()
+	initialize_policies(policies_prev, states)
+	initialize_policies(policies_next, states)
+	change = True
+	print("starting value iteration")
+
+	while change:
+		change = False
+		for state in [s for s in states if not s.current_vertex.target]:
+			source_vertex = state.current_vertex
+			max = float('-inf')
+			for action in state.get_actions_from(world):
+				expectency_for_edge = 0
+				for state_tag in states:
+					destination_vertex = state_tag.current_vertex
+					if action.is_edge_of(source_vertex, destination_vertex):
+						prob = transition(state, state_tag, world)
+						expectency_for_edge += prob*(-action.weight + policies_prev[state_tag][0])
+				if expectency_for_edge > max:
+					print("changed",expectency_for_edge)
+					max = expectency_for_edge
+					policies_next[state] = expectency_for_edge,action
+					change = True
+		policies_prev = policies_next
+	return policies_next
+
+
+
+
+
+
+
+

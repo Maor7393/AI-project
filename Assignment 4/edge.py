@@ -9,6 +9,9 @@ class Edge(object):
 		self.v1 = v1
 		self.v2 = v2
 
+	def is_edge_of(self, vertex1: Vertex, vertex2: Vertex):
+		return vertex1 != vertex2 and vertex1 in [self.v1, self.v2] and vertex2 in [self.v1, self.v2]
+
 	def __str__(self):
 		s = "(EDGE " + self.name + ", blocked with probability: " + str(self.blocked_in_prob)
 		s += ", weight " + str(self.weight) + ", "+ str(self.v1) + " " + str(self.v2) + ")"
