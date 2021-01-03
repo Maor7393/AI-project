@@ -21,7 +21,6 @@ class Graph(object):
                 blockable_edges.append(neighbor_tup[2])
         return blockable_edges
 
-
     def get_edges(self):
         edges = set()
         for vertex in self.graph_dict:

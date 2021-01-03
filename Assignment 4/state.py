@@ -9,13 +9,13 @@ def generate_states(graph: g.Graph):
 	states = []
 	vertices = graph.get_vertices()
 	edges = graph.get_edges()
-	possibilites_for_edges = itertools.product([0, 1, names.U],
-	                                           repeat=len([edge for edge in edges if edge.blocked_in_prob > 0]))
+	blockable_edges = [edge for edge in edges if edge.blocked_in_prob > 0]
+	possibilites_for_edges = itertools.product([0, 1, names.U], repeat=len(blockable_edges))
 	for possibility in possibilites_for_edges:
-		edges_status = dict(zip(edges, possibility))
+		edges_status = dict(zip(blockable_edges, possibility))
 		for vertex in vertices:
 			states.append(State(vertex, edges_status))
-	return states
+	return filter_bad_states(states,graph)
 
 
 class State:
@@ -28,10 +28,10 @@ class State:
 		return self.edges_status == other.edges_status
 
 	def __str__(self):
-		s = "Current vertex: " + str(self.current_vertex) + "\n{"
+		s = "STATE\nCurrent vertex: " + str(self.current_vertex) + "\n{"
 		for edge in self.edges_status:
-			s += edge.name + ": " + str(self.edges_status[edge]) + "\n"
-		return s + "}"
+			s += edge.name + ": " + str(self.edges_status[edge]) + ", "
+		return s + "}\n"
 
 
 def state_list_as_string(state_list) -> str:
@@ -41,5 +41,34 @@ def state_list_as_string(state_list) -> str:
 	return s
 
 
-def consistant_states(state1, state2) -> bool:
-	pass
+def consistent_states(state1: State, state2: State) -> bool:
+	for edge_status in state1.edges_status.items():
+		edge = edge_status[0]
+		status = edge_status[1]
+		if (status == 0 or status == 1) and state2.edges_status[edge] != status:
+			return False
+	return True
+
+
+def discovered_edges(state1: State, state2: State) -> list:
+	edges = []
+	for blockable_edge in state1.edges_status.keys():
+		if state1.edges_status[blockable_edge] == names.U:
+			if state2.edges_status[blockable_edge] != names.U:
+				zero_or_one = state2.edges_status[blockable_edge]
+				edges.append((blockable_edge, zero_or_one))
+	return edges
+
+def filter_bad_states(states:list[State],graph:g.Graph) -> list[State]:
+	filtered_states = []
+	for state in states:
+		vertex = state.current_vertex
+		blockable_edges_from_vertex = graph.get_adjacent_blockable_edges(vertex)
+		makes_sense = True
+		for blockable_edge in blockable_edges_from_vertex:
+			if state.edges_status[blockable_edge] == names.U:
+				makes_sense = False
+				break
+		if makes_sense:
+			filtered_states.append(state)
+	return filtered_states

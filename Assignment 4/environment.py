@@ -2,8 +2,9 @@ import itertools
 import graph as g
 import vertex as v
 import state as s
-from state import State
 import names
+from mdp import consistent_states
+from mdp import transition
 
 
 def generate_graph(file_name):
@@ -40,4 +41,18 @@ def generate_graph(file_name):
 if __name__ == '__main__':
     graph = generate_graph(names.input_file)
     print(graph)
-    print(s.state_list_as_string(s.generate_states(graph)))
+    all_states = s.generate_states(graph)
+    print(s.state_list_as_string(all_states))
+    print("------------------------------------------------------")
+    for i in range(len(all_states)):
+        for j in range(len(all_states)):
+            if i == j:
+                continue
+            state1 = all_states[i]
+            state2 = all_states[j]
+            trans = transition(state1, state2, graph)
+            print("----------------------")
+            print("Prob:", trans, "\n", state1, state2)
+            print("----------------------")
+
+
