@@ -3,9 +3,6 @@ V v2 0.4
 V v3 0.0
 V v4 0
 
-
-
-
 E e1 v1 v2 1
 E e2 v2 v3 3
 E e3 v3 v4 3

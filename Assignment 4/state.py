@@ -54,8 +54,6 @@ def consistent_states(state1: State, state2: State) -> bool:
 	return True
 
 
-
-
 def discovered_edges(state1: State, state2: State) -> list:
 	edges = []
 	for blockable_edge in state1.edges_status.keys():
@@ -66,7 +64,7 @@ def discovered_edges(state1: State, state2: State) -> list:
 	return edges
 
 
-def filter_bad_states(states:list[State],graph:g.Graph) -> list[State]:
+def filter_bad_states(states:list[State], graph:g.Graph) -> list[State]:
 	filtered_states = []
 	for state in states:
 		vertex = state.current_vertex

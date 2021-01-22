@@ -135,29 +135,6 @@ def get_parent_assignment_in_evidence(Y: str, evidence: set, bayes_network: Baye
     return parents_in_evidence
 
 
-def enumeration_all(variables, evidence, bayes_network):
-    if len(variables) == 0:
-        return 1
-    Y = variables[0]
-    Y_node = bayes_network.get_node(Y)
-    has_val, val = has_value_in_evidence(Y, evidence)
-    Y_parents = get_parent_assignment_in_evidence(Y, evidence, bayes_network)
-    if has_val:
-        prob_Y_given_parents = Y_node.table.get_probability_given_parents(val, Y_parents)
-        return prob_Y_given_parents * enumeration_all(variables[1:], evidence, bayes_network)
-    else:
-        prob_Y_false = Y_node.table.get_probability_given_parents(False, Y_parents) * enumeration_all(variables[1:],
-                                                                                                         evidence.union(
-                                                                                                             {(Y,
-                                                                                                               False)}),
-                                                                                                         bayes_network)
-        prob_Y_true = Y_node.table.get_probability_given_parents(True, Y_parents) * enumeration_all(variables[1:],
-                                                                                                       evidence.union(
-                                                                                                           {(Y, True)}),
-                                                                                                       bayes_network)
-        return prob_Y_false + prob_Y_true
-
-
 def normalize(distribution):
     acc = 0
     for value in distribution.values():
@@ -180,3 +157,21 @@ def enumeration_ask(x_query: list, evidence: set, bayes_network: BayesNetwork):
         prob = enumeration_all(variables, extended_evidence, bayes_network)
         distribution_x[assignment] = prob
     return normalize(distribution_x)
+
+
+def enumeration_all(variables, evidence, bayes_network):
+    if len(variables) == 0:
+        return 1
+    Y = variables[0]
+    Y_node = bayes_network.get_node(Y)
+    has_val, val = has_value_in_evidence(Y, evidence)
+    Y_parents = get_parent_assignment_in_evidence(Y, evidence, bayes_network)
+    if has_val:
+        prob_Y_given_parents = Y_node.table.get_probability_given_parents(val, Y_parents)
+        return prob_Y_given_parents * enumeration_all(variables[1:], evidence, bayes_network)
+    else:
+        prob_Y_false = Y_node.table.get_probability_given_parents(False, Y_parents) * enumeration_all(variables[1:], evidence.union({(Y,False)}), bayes_network)
+        prob_Y_true = Y_node.table.get_probability_given_parents(True, Y_parents) * enumeration_all(variables[1:], evidence.union({(Y, True)}), bayes_network)
+        return prob_Y_false + prob_Y_true
+
+

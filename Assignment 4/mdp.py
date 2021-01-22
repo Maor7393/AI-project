@@ -50,7 +50,6 @@ def value_iteration(states: list[State], world: Graph) -> dict:
 	initialize_policies(policies_next, states)
 	change = True
 	print("starting value iteration")
-
 	while change:
 		change = False
 		for state in [s for s in states if not s.current_vertex.target]:
@@ -64,7 +63,7 @@ def value_iteration(states: list[State], world: Graph) -> dict:
 						prob = transition(state, state_tag, world)
 						expectency_for_edge += prob*(-action.weight + policies_prev[state_tag][0])
 				if expectency_for_edge > max:
-					print("changed",expectency_for_edge)
+					print("changed", expectency_for_edge)
 					max = expectency_for_edge
 					policies_next[state] = expectency_for_edge,action
 					change = True
