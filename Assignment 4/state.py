@@ -37,6 +37,14 @@ class State:
 			s += edge.name + ": " + str(self.edges_status[edge]) + ", "
 		return s + "}\n"
 
+	def edge_blocked_in_state(self, edge:Edge) -> bool:
+		for edge_status in self.edges_status.items():
+			edge_from_status = edge_status[0]
+			status = edge_status[1]
+			if status == 1 and edge_from_status == edge:
+				return True
+		return False
+
 
 def state_list_as_string(state_list) -> str:
 	s = "STATES:\n"

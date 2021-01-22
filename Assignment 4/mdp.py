@@ -1,6 +1,6 @@
 import operator
 from functools import reduce
-
+import copy
 from state import State
 from graph import Graph
 from state import consistent_states, discovered_edges
@@ -40,7 +40,7 @@ def initialize_policies(policies: dict, states: list[State]):
 		if state.current_vertex.target:
 			policies[state] = (0, names.finish)
 		else:
-			policies[state] = (0, None)
+			policies[state] = (float('-inf'), None)
 
 
 def value_iteration(states: list[State], world: Graph) -> dict:
@@ -54,20 +54,27 @@ def value_iteration(states: list[State], world: Graph) -> dict:
 		change = False
 		for state in [s for s in states if not s.current_vertex.target]:
 			source_vertex = state.current_vertex
-			max = float('-inf')
+			max_expectancy = float('-inf')
+			best_action = None
 			for action in state.get_actions_from(world):
+				if state.edge_blocked_in_state(action):
+					continue
 				expectency_for_edge = 0
 				for state_tag in states:
 					destination_vertex = state_tag.current_vertex
 					if action.is_edge_of(source_vertex, destination_vertex):
 						prob = transition(state, state_tag, world)
+						if policies_prev[state_tag][0] == float('-inf'):
+							expectency_for_edge = float('-inf')
+							continue
 						expectency_for_edge += prob*(-action.weight + policies_prev[state_tag][0])
-				if expectency_for_edge > max:
-					print("changed", expectency_for_edge)
-					max = expectency_for_edge
-					policies_next[state] = expectency_for_edge,action
-					change = True
-		policies_prev = policies_next
+				if expectency_for_edge > max_expectancy:
+					max_expectancy = expectency_for_edge
+					best_action = action
+			if max_expectancy > policies_prev[state][0]:
+				change = True
+				policies_next[state] = round(max_expectancy,2), best_action
+		policies_prev = copy.copy(policies_next)
 	return policies_next
 
 
