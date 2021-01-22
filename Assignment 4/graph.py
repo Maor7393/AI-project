@@ -28,6 +28,10 @@ class Graph(object):
                 edges.add(neighbor_tuple[2])
         return list(edges)
 
+    def get_blockable_edges(self) -> list[Edge]:
+        edges = self.get_edges()
+        return [edge for edge in edges if edge.blocked_in_prob > 0]
+
     def get_vertex(self, name):
         vertex_to_ret = None
         for vertex in self.get_vertices():
@@ -91,7 +95,7 @@ class Graph(object):
         return edges
 
     def __str__(self):
-        s =""
+        s = ""
         for edge in self.get_edges():
             s += str(edge) + "\n"
         s += "\n"

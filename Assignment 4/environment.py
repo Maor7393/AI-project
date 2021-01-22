@@ -3,7 +3,8 @@ import graph as g
 import vertex as v
 import state as s
 import names
-from mdp import value_iteration
+from mdp import value_iteration,print_policies
+import agent
 
 
 def generate_graph(file_name):
@@ -45,12 +46,17 @@ if __name__ == '__main__':
     target_vertex = graph.get_vertex(input("type target vertex\n"))
     target_vertex.target = True
     states = s.generate_states(graph)
-    policies = value_iteration(states,graph)
-    for policy_item in policies.items():
-        state = policy_item[0]
-        utility = policy_item[1][0]
-        action = policy_item[1][1]
-        print(state, "UTILITY:", utility, "ACTION: ", action)
+    policies = value_iteration(states, graph)
+    print_policies(policies)
+    print("\n\n\n", "------------------------------------------------", "\nSIMULATION:\n")
+    blockable_edges_status = dict()
+    for blockable_edge in graph.get_blockable_edges():
+        blocking_input = input("Do you want to block edge " + blockable_edge.name + "? respond with y or n\n")
+        if blocking_input == 'y':
+            blockable_edges_status[blockable_edge] = True
+        else:
+            blockable_edges_status[blockable_edge] = False
+    agent.find_target(graph, blockable_edges_status, policies, states, s.get_starting_state(states, starting_vertex))
 
 
 

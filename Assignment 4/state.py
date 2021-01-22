@@ -19,11 +19,31 @@ def generate_states(graph: g.Graph):
 	return filter_bad_states(states, graph)
 
 
+def get_starting_state(states:list, starting_vertex):
+	for state in states:
+		if state.current_vertex == starting_vertex and state.all_edges_unknown():
+			return state
+	exit(1)
+
+
+def get_state_from_states(states:list, required_current_vertex, required_edges_status):
+	for state in states:
+		if state.current_vertex == required_current_vertex and state.edges_status == required_edges_status:
+			return state
+	exit(2)
+
+
 class State:
 
 	def __init__(self, current_vertex: v.Vertex, edges_status: dict):
 		self.current_vertex = current_vertex
 		self.edges_status = cp.copy(edges_status)
+
+	def all_edges_unknown(self) -> bool:
+		for value in self.edges_status.values():
+			if value != names.U:
+				return False
+		return True
 
 	def same_status(self, other) -> bool:
 		return self.edges_status == other.edges_status
@@ -44,6 +64,10 @@ class State:
 			if status == 1 and edge_from_status == edge:
 				return True
 		return False
+
+
+	def goal_state(self):
+		return self.current_vertex.target
 
 
 def state_list_as_string(state_list) -> str:

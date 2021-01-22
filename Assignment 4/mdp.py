@@ -49,7 +49,6 @@ def value_iteration(states: list[State], world: Graph) -> dict:
 	initialize_policies(policies_prev, states)
 	initialize_policies(policies_next, states)
 	change = True
-	print("starting value iteration")
 	while change:
 		change = False
 		for state in [s for s in states if not s.current_vertex.target]:
@@ -78,6 +77,12 @@ def value_iteration(states: list[State], world: Graph) -> dict:
 	return policies_next
 
 
+def print_policies(policies:dict):
+	for policy_item in policies.items():
+		state = policy_item[0]
+		utility = policy_item[1][0]
+		action = policy_item[1][1]
+		print(state, "UTILITY:", utility, "ACTION: ", action)
 
 
 

@@ -17,6 +17,12 @@ class Edge(object):
 		s += ", weight " + str(self.weight) + ", "+ str(self.v1) + " " + str(self.v2) + ")"
 		return s
 
+	def get_destination_vertex(self, source):
+		if self.v1 == source:
+			return self.v2
+		else:
+			return self.v1
+
 
 def get_edge_list_as_string(edge_list):
 	s = "[ "
