@@ -40,7 +40,7 @@ def initialize_policies(policies: dict, states: list[State]):
 		if state.current_vertex.target:
 			policies[state] = (0, names.finish)
 		else:
-			policies[state] = (float('-inf'), None)
+			policies[state] = (names.default_value, None)
 
 
 def value_iteration(states: list[State], world: Graph) -> dict:
@@ -52,8 +52,10 @@ def value_iteration(states: list[State], world: Graph) -> dict:
 	while change:
 		change = False
 		for state in [s for s in states if not s.current_vertex.target]:
+			if state.current_vertex.name == "v2" and state.all_edges_zeros():
+				print("at v2 0 0 ")
 			source_vertex = state.current_vertex
-			max_expectancy = float('-inf')
+			max_expectancy = names.default_value
 			best_action = None
 			for action in state.get_actions_from(world):
 				if state.edge_blocked_in_state(action):
@@ -63,16 +65,13 @@ def value_iteration(states: list[State], world: Graph) -> dict:
 					destination_vertex = state_tag.current_vertex
 					if action.is_edge_of(source_vertex, destination_vertex):
 						prob = transition(state, state_tag, world)
-						if policies_prev[state_tag][0] == float('-inf'):
-							expectency_for_edge = float('-inf')
-							continue
 						expectency_for_edge += prob*(-action.weight + policies_prev[state_tag][0])
 				if expectency_for_edge > max_expectancy:
 					max_expectancy = expectency_for_edge
 					best_action = action
 			if max_expectancy > policies_prev[state][0]:
 				change = True
-				policies_next[state] = round(max_expectancy,2), best_action
+				policies_next[state] = round(max_expectancy, 2), best_action
 		policies_prev = copy.copy(policies_next)
 	return policies_next
 
