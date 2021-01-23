@@ -45,12 +45,6 @@ class State:
 				return False
 		return True
 
-	def all_edges_zeros(self) -> bool:
-		for value in self.edges_status.values():
-			if value != 0:
-				return False
-		return True
-
 	def same_status(self, other) -> bool:
 		return self.edges_status == other.edges_status
 
@@ -70,7 +64,6 @@ class State:
 			if status == 1 and edge_from_status == edge:
 				return True
 		return False
-
 
 	def goal_state(self):
 		return self.current_vertex.target

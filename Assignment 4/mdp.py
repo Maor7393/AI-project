@@ -52,8 +52,6 @@ def value_iteration(states: list[State], world: Graph) -> dict:
 	while change:
 		change = False
 		for state in [s for s in states if not s.current_vertex.target]:
-			if state.current_vertex.name == "v2" and state.all_edges_zeros():
-				print("at v2 0 0 ")
 			source_vertex = state.current_vertex
 			max_expectancy = names.default_value
 			best_action = None
